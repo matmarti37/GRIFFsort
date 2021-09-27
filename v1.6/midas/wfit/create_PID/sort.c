@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
   
   // Trying to write the data to a root file
   char title[132];
-  sprintf(title, "%s/%d_fits.root",output_dir,chi_sq_cutoff);
+  sprintf(title, "%s/d%d-d%d_chisq%d_PID.root",output_dir,det_low,det_high,chi_sq_cutoff);
   TFile f(title, "recreate");
   
   //Setting options for accepted plots
