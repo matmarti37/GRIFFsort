@@ -64,9 +64,11 @@ int main(int argc, char *argv[])
   // }
   // End of detector map file reading
   
+  char buff[12];
   for(i=0;i<128;i++)
    {
-    h[i]=new TH1D("Detector","Detector",S65K,0,S65K);
+    snprintf(buff,12,"Detector%i",i+1);
+    h[i]=new TH1D(buff,buff,S65K,0,S65K);
     h[i]->Reset();
    }
   h_2D=new TH2D("EnergySpectrum","EnergySpectrum",130,0,130,S65K,0,S65K);
