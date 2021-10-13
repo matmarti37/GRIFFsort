@@ -16,10 +16,6 @@
 #include "math.h"
 
 ShapePar* par;
-TH1D *h[256],*hcsi;
-TH2D *h2[256];
-int hist[256][S4K];
-
 
 char data_filename[128], output_filename[128], map_filename[128], cal_filename[128], ring_filename[128];
 int chisq_cutoff, ring_low, ring_high;
@@ -36,5 +32,7 @@ TH1D *ring_h[10];
 
 TH1D *uncal_det_h[256];
 TH1D *uncal_ring_h[10];
+
+int ampl_flag=0;
 
 #endif

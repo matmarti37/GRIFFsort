@@ -28,6 +28,7 @@ void read_parameter_file(char *param_filename)
   else if(strcmp(buf,"T_G")==0) {par->t[4]=atof(buf2);}
   else if(strcmp(buf,"RING_LOW")==0) {ring_low=atoi(buf2);}
   else if(strcmp(buf,"RING_HIGH")==0) {ring_high=atoi(buf2);}
+  else if(strcmp(buf,"PLOT_AMPLITUDE")==0 && (strcmp(buf2,"YES")==0 || strcmp(buf2,"yes") || strcmp(buf2,"y") || strcmp(buf2,"Y"))) {ampl_flag=1;}
   else {printf("Unknown parameter: %s\nIgnoring line and continuing\n",buf);}
  }
  printf("\nParameter file read\n");
@@ -43,7 +44,7 @@ void read_parameter_file(char *param_filename)
  printf("tS:                     %Lf\n",par->t[3]);
  printf("tG:                     %Lf\n",par->t[4]);
  printf("Ring low:               %d\n",ring_low);
- printf("Ring high:              %d\n\n",ring_high);
+ printf("Ring high:              %d\n",ring_high);
  return;
 }
 
@@ -147,23 +148,31 @@ void create_histograms()
  for(i=1;i<129;i++)
  {
   sprintf(histname,"energy_%3d",i);
-  det_h[i]=new TH1D(histname,histname,1024,0,12);
+  //det_h[i]=new TH1D(histname,histname,S8K,0,12000);
+  det_h[i]=new TH1D(histname,histname,S8K,0,12);
   det_h[i]->Reset();
   
-  sprintf(histname,"amplitude_%3d",i);
-  uncal_det_h[i]=new TH1D(histname,histname,1024,0,S4K);
-  uncal_det_h[i]->Reset();
+  if(ampl_flag==1)
+  {
+   sprintf(histname,"amplitude_%3d",i);
+   uncal_det_h[i]=new TH1D(histname,histname,1024,0,S4K);
+   uncal_det_h[i]->Reset();
+  }
  }
  
  for(i=0;i<10;i++)
  {
   sprintf(histname,"energy_ring%2d",i);
-  ring_h[i]=new TH1D(histname,histname,1024,0,12);
+  //ring_h[i]=new TH1D(histname,histname,S8K,0,12000);
+  ring_h[i]=new TH1D(histname,histname,S8K,0,12);
   ring_h[i]->Reset();
   
-  sprintf(histname,"amplitude_ring%2d",i);
-  uncal_ring_h[i]=new TH1D(histname,histname,1024,0,S4K);
-  uncal_ring_h[i]->Reset();
+  if(ampl_flag==1)
+  {
+   sprintf(histname,"amplitude_ring%2d",i);
+   uncal_ring_h[i]=new TH1D(histname,histname,1024,0,S4K);
+   uncal_ring_h[i]->Reset();
+  }
  }
  
  printf("Histograms initialized\n\n");
@@ -214,12 +223,15 @@ void create_root_files(char *output_filename)
    det_h[i]->GetYaxis()->SetTitleOffset(1.5);
    det_h[i]->Write();
    
-   uncal_det_h[i]->GetXaxis()->SetTitle("Amplitude [arb.]");
-   uncal_det_h[i]->GetXaxis()->CenterTitle(true);
-   uncal_det_h[i]->GetYaxis()->SetTitle("Counts");
-   uncal_det_h[i]->GetYaxis()->CenterTitle(true);
-   uncal_det_h[i]->GetYaxis()->SetTitleOffset(1.5);
-   uncal_det_h[i]->Write();
+   if(ampl_flag==1)
+   {
+    uncal_det_h[i]->GetXaxis()->SetTitle("Amplitude [arb.]");
+    uncal_det_h[i]->GetXaxis()->CenterTitle(true);
+    uncal_det_h[i]->GetYaxis()->SetTitle("Counts");
+    uncal_det_h[i]->GetYaxis()->CenterTitle(true);
+    uncal_det_h[i]->GetYaxis()->SetTitleOffset(1.5);
+    uncal_det_h[i]->Write();
+   }
   }
  }
  
@@ -234,12 +246,15 @@ void create_root_files(char *output_filename)
    ring_h[i]->GetYaxis()->SetTitleOffset(1.5);
    ring_h[i]->Write();
    
-   uncal_ring_h[i]->GetXaxis()->SetTitle("Amplitude [arb.]");
-   uncal_ring_h[i]->GetXaxis()->CenterTitle(true);
-   uncal_ring_h[i]->GetYaxis()->SetTitle("Counts");
-   uncal_ring_h[i]->GetYaxis()->CenterTitle(true);
-   uncal_ring_h[i]->GetYaxis()->SetTitleOffset(1.5);
-   uncal_ring_h[i]->Write();
+   if(ampl_flag==1)
+   {
+    uncal_ring_h[i]->GetXaxis()->SetTitle("Amplitude [arb.]");
+    uncal_ring_h[i]->GetXaxis()->CenterTitle(true);
+    uncal_ring_h[i]->GetYaxis()->SetTitle("Counts");
+    uncal_ring_h[i]->GetYaxis()->CenterTitle(true);
+    uncal_ring_h[i]->GetYaxis()->SetTitleOffset(1.5);
+    uncal_ring_h[i]->Write();
+   }
   }
  }
  return;

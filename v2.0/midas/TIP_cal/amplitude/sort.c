@@ -21,14 +21,14 @@ int analyze_fragment(Grif_event* ptr,short* waveform)
    if(red_chisq<=chisq_cutoff && par->type==1)
    {
     amplitude=par->am[2]+par->am[3]; // Amplitude = Fast + Slow
-    energy=TIP_cal_params[detector][0]+TIP_cal_params[detector][1]*amplitude; // Calibrated
+    energy=(TIP_cal_params[detector][0]+TIP_cal_params[detector][1]*amplitude); // Calibrated
     
     // Fill detector by detector histograms
     det_h[detector]->Fill(energy);
-    uncal_det_h[detector]->Fill(amplitude);
+    if(ampl_flag==1) {uncal_det_h[detector]->Fill(amplitude);}
     
     ring_h[ring]->Fill(energy);
-    uncal_ring_h[ring]->Fill(amplitude);
+    if(ampl_flag==1) {uncal_ring_h[ring]->Fill(amplitude);}
    }
   }
  }
