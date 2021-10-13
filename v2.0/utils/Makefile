@@ -10,8 +10,7 @@ INC = -I$(GRIFFsort)/current/utils\
 UTILS=read_master.o\
       lin_eq_solver.o\
       get_sin_par.o\
-      waveform_analyzer.o\
-      calibrate_TIP.o
+      waveform_analyzer.o
 
 utils:$(UTILS) addspn
 	$ ar rcs $(BIN)/utils.a $(UTILS)
@@ -28,9 +27,6 @@ get_sin_par.o:get_sin_par.c get_sin_par.h
 
 waveform_analyzer.o:waveform_analyzer.c waveform_analyzer.h
 	$(CC) -c -o waveform_analyzer.o $(CFLAGS) waveform_analyzer.c -I$(INC) $(ROOT)
-
-calibrate_TIP.o:calibrate_TIP.c calibrate_TIP.h
-	$(CC) -c -o calibrate_TIP.o $(CFLAGS) calibrate_TIP.c -I$(INC) $(ROOT)
 
 addspn:
 	$(CC) -o addspn $(CFLAGS) addspn.c -I$(INC)
