@@ -28,7 +28,7 @@ void read_parameter_file(char *param_filename)
   else if(strcmp(buf,"T_G")==0) {par->t[4]=atof(buf2);}
   else if(strcmp(buf,"RING_LOW")==0) {ring_low=atoi(buf2);}
   else if(strcmp(buf,"RING_HIGH")==0) {ring_high=atoi(buf2);}
-  else if(strcmp(buf,"PLOT_AMPLITUDE")==0 && (strcmp(buf2,"YES")==0 || strcmp(buf2,"yes") || strcmp(buf2,"y") || strcmp(buf2,"Y"))) {ampl_flag=1;}
+  else if(strcmp(buf,"PLOT_UNCALIBRATED")==0 && (strcmp(buf2,"YES")==0 || strcmp(buf2,"yes") || strcmp(buf2,"y") || strcmp(buf2,"Y"))) {ampl_flag=1;}
   else {printf("Unknown parameter: %s\nIgnoring line and continuing\n",buf);}
  }
  printf("\nParameter file read\n");
@@ -144,35 +144,21 @@ void read_ring_map(char *filename)
 void create_histograms()
 {
  char histname[128];
- int i=0;
- for(i=1;i<129;i++)
- {
-  sprintf(histname,"energy_%3d",i);
-  //det_h[i]=new TH1D(histname,histname,S8K,0,12000);
-  det_h[i]=new TH1D(histname,histname,S8K,0,24);
-  det_h[i]->Reset();
-  
-  if(ampl_flag==1)
-  {
-   sprintf(histname,"amplitude_%3d",i);
-   uncal_det_h[i]=new TH1D(histname,histname,1024,0,S4K);
-   uncal_det_h[i]->Reset();
-  }
- }
  
+ sprintf(histname,"Calibrated Particle ID");
+ cal_PID=new TH2D(histname,histname,S8K,0,32,150,100,250); cal_PID->Reset();
+ 
+ sprintf(histname,"PID_Uncalibrated");
+ uncal_PID=new TH2D(histname,histname,S1K,0,S4K,150,100,250); uncal_PID->Reset();
+ 
+ int i;
  for(i=0;i<10;i++)
  {
-  sprintf(histname,"energy_ring%2d",i);
-  //ring_h[i]=new TH1D(histname,histname,S8K,0,12000);
-  ring_h[i]=new TH1D(histname,histname,S8K,0,24);
-  ring_h[i]->Reset();
+  sprintf(histname,"Ring%2d_PID_Calibrated",i);
+  ring_cal_PID[i]=new TH2D(histname,histname,S8K,0,32,150,100,250); ring_cal_PID[i]->Reset();
   
-  if(ampl_flag==1)
-  {
-   sprintf(histname,"amplitude_ring%2d",i);
-   uncal_ring_h[i]=new TH1D(histname,histname,1024,0,S4K);
-   uncal_ring_h[i]->Reset();
-  }
+  sprintf(histname,"Ring%2d_PID_Uncalibrated",i);
+  ring_uncal_PID[i]=new TH2D(histname,histname,S1K,0,S4K,150,100,250); ring_uncal_PID[i]->Reset();
  }
  
  printf("Histograms initialized\n\n");
@@ -207,54 +193,52 @@ void sort_data(char *filename)
 /*-------------------------------------------------*/
 void create_root_files(char *output_filename)
 {
- //char title[128];
- //sprintf(title,"Spectra.root");
  TFile f(output_filename,"recreate");
  
- int i;
- for(i=1;i<129;i++)
+ if(cal_PID->GetEntries())
  {
-  if(det_h[i]->GetEntries())
-  {
-   det_h[i]->GetXaxis()->SetTitle("Energy [MeV]");
-   det_h[i]->GetXaxis()->CenterTitle(true);
-   det_h[i]->GetYaxis()->SetTitle("Counts");
-   det_h[i]->GetYaxis()->CenterTitle(true);
-   det_h[i]->GetYaxis()->SetTitleOffset(1.5);
-   det_h[i]->Write();
-   
-   if(ampl_flag==1)
-   {
-    uncal_det_h[i]->GetXaxis()->SetTitle("Amplitude [arb.]");
-    uncal_det_h[i]->GetXaxis()->CenterTitle(true);
-    uncal_det_h[i]->GetYaxis()->SetTitle("Counts");
-    uncal_det_h[i]->GetYaxis()->CenterTitle(true);
-    uncal_det_h[i]->GetYaxis()->SetTitleOffset(1.5);
-    uncal_det_h[i]->Write();
-   }
-  }
+  cal_PID->GetXaxis()->SetTitle("Energy [MeV]");
+  cal_PID->GetXaxis()->CenterTitle(true);
+  cal_PID->GetYaxis()->SetTitle("A_{S}/A_{F} \\times 100 + 100");
+  cal_PID->GetYaxis()->CenterTitle(true);
+  cal_PID->GetYaxis()->SetTitleOffset(0);
+  cal_PID->SetOption("COLZ");
+  cal_PID->SetStats(0);
+  cal_PID->Write();
+ }
+ if(uncal_PID->GetEntries())
+ {
+  uncal_PID->GetXaxis()->SetTitle("Amplitude [arb.]");
+  uncal_PID->GetXaxis()->CenterTitle(true);
+  uncal_PID->GetYaxis()->SetTitle("$A_S/A_F \\times 100 + 100$");
+  uncal_PID->GetYaxis()->CenterTitle(true);
+  uncal_PID->GetYaxis()->SetTitleOffset(0);
+  uncal_PID->SetOption("COLZ");
+  uncal_PID->Write();
  }
  
+ int i;
  for(i=0;i<10;i++)
  {
-  if(ring_h[i]->GetEntries())
+  if(ring_cal_PID[i]->GetEntries())
   {
-   ring_h[i]->GetXaxis()->SetTitle("Energy [MeV]");
-   ring_h[i]->GetXaxis()->CenterTitle(true);
-   ring_h[i]->GetYaxis()->SetTitle("Counts");
-   ring_h[i]->GetYaxis()->CenterTitle(true);
-   ring_h[i]->GetYaxis()->SetTitleOffset(1.5);
-   ring_h[i]->Write();
-   
-   if(ampl_flag==1)
-   {
-    uncal_ring_h[i]->GetXaxis()->SetTitle("Amplitude [arb.]");
-    uncal_ring_h[i]->GetXaxis()->CenterTitle(true);
-    uncal_ring_h[i]->GetYaxis()->SetTitle("Counts");
-    uncal_ring_h[i]->GetYaxis()->CenterTitle(true);
-    uncal_ring_h[i]->GetYaxis()->SetTitleOffset(1.5);
-    uncal_ring_h[i]->Write();
-   }
+   ring_cal_PID[i]->GetXaxis()->SetTitle("Energy [MeV]");
+   ring_cal_PID[i]->GetXaxis()->CenterTitle(true);
+   ring_cal_PID[i]->GetYaxis()->SetTitle("$A_S/A_F \\times 100 + 100$");
+   ring_cal_PID[i]->GetYaxis()->CenterTitle(true);
+   ring_cal_PID[i]->GetYaxis()->SetTitleOffset(0);
+   ring_cal_PID[i]->SetOption("COLZ");
+   ring_cal_PID[i]->Write();
+  }
+  if(ring_uncal_PID[i]->GetEntries())
+  {
+   ring_uncal_PID[i]->GetXaxis()->SetTitle("Amplitude [arb.]");
+   ring_uncal_PID[i]->GetXaxis()->CenterTitle(true);
+   ring_uncal_PID[i]->GetYaxis()->SetTitle("$A_S/A_F \\times 100 + 100$");
+   ring_uncal_PID[i]->GetYaxis()->CenterTitle(true);
+   ring_uncal_PID[i]->GetYaxis()->SetTitleOffset(0);
+   ring_uncal_PID[i]->SetOption("COLZ");
+   ring_uncal_PID[i]->Write();
   }
  }
  return;

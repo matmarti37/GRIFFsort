@@ -18,9 +18,19 @@ void read_parameter_file(char *param_filename)
   
   if(strcmp(buf,"DATA_LIST")==0) {strcpy(data_filename,buf2);}
   else if(strcmp(buf,"OUTPUT_FILE")==0) {strcpy(output_filename,buf2);}
-  else if(strcmp(buf,"DETECTOR_MAP")==0) {strcpy(map_filename,buf2);}
-  else if(strcmp(buf,"CALIBRATION_FILE")==0) {strcpy(cal_filename,buf2);}
-  else if(strcmp(buf,"RING_FILE")==0) {strcpy(ring_filename,buf2);}
+  
+  else if(strcmp(buf,"CSI_DETECTOR_MAP")==0) {strcpy(csi_map_filename,buf2);}
+  else if(strcmp(buf,"TIGRESS_DETECTOR_MAP")==0) {strcpy(tig_map_filename,buf2);}
+  else if(strcmp(buf,"SUPPRESSOR_DETECTOR_MAP")==0) {strcpy(sup_map_filename,buf2);}
+  
+  else if(strcmp(buf,"CSI_CALIBRATION_FILE")==0) {strcpy(csi_cal_filename,buf2);}
+  else if(strcmp(buf,"TIGRESS_CALIBRATION_FILE")==0) {strcpy(tig_cal_filename,buf2);}
+  else if(strcmp(buf,"SUPPRESSOR_CALIBRATION_FILE")==0) {strcpy(sup_cal_filename,buf2);}
+  
+  else if(strcmp(buf,"CSI_RING_FILE")==0) {strcpy(csi_ring_filename,buf2);}
+  else if(strcmp(buf,"TIGRESS_RING_FILE")==0) {strcpy(tig_ring_filename,buf2);}
+  else if(strcmp(buf,"SUPPRESSOR_RING_FILE")==0) {strcpy(sup_ring_filename,buf2);}
+  
   else if(strcmp(buf,"CHI_SQ_CUTOFF")==0) {chisq_cutoff=atoi(buf2);}
   else if(strcmp(buf,"T_RC")==0) {par->t[1]=atof(buf2);}
   else if(strcmp(buf,"T_F")==0) {par->t[2]=atof(buf2);}
@@ -31,6 +41,7 @@ void read_parameter_file(char *param_filename)
   else if(strcmp(buf,"PLOT_AMPLITUDE")==0 && (strcmp(buf2,"YES")==0 || strcmp(buf2,"yes") || strcmp(buf2,"y") || strcmp(buf2,"Y"))) {ampl_flag=1;}
   else {printf("Unknown parameter: %s\nIgnoring line and continuing\n",buf);}
  }
+ /*
  printf("\nParameter file read\n");
  printf("\n");
  printf("Data file:              %s\n",data_filename);
@@ -45,21 +56,22 @@ void read_parameter_file(char *param_filename)
  printf("tG:                     %Lf\n",par->t[4]);
  printf("Ring low:               %d\n",ring_low);
  printf("Ring high:              %d\n",ring_high);
+ */
  return;
 }
 
 /*-------------------------------------------------*/
-//      READ MAP FILE
+//      READ CSI MAP FILE
 /*-------------------------------------------------*/
-void read_map_file(char *filename)
+void read_csi_map(char *filename)
 {
  FILE *map_file=fopen(filename,"r");
- if(map_file==NULL) {printf("\nError in opening map file\n"); exit(-1);}
+ if(map_file==NULL) {printf("\nError in opening csi map file\n"); exit(-1);}
  
  int i;
  
  printf("Successfully opened map file\nReading map file\n");
- for(i=0;i<S2K;i++) {det_map[i]=-1;} // Initializes the detector map
+ for(i=0;i<S2K;i++) {csi_pos[i]=-1;} // Initializes the csi positions
  
  char * line=NULL;
  size_t len=0; ssize_t read;
@@ -67,11 +79,73 @@ void read_map_file(char *filename)
  int buf=0, buf2=0;
  while((read=getline(&line,&len,map_file))!=-1)
  {
-  num_items=sscanf(line,"%d\t%d",&j,&buf);
-  num_items=sscanf(line,"%d\t%d",&buf2,&det_map[j]);
+  num_items=sscanf(line,"%d\t%d",&buf,&j);
+  num_items=sscanf(line,"%d\t%d",&csi_pos[j],&buf2);
   if(num_items!=2) {printf("Fix map file\n"); exit(-1);}
  }
- printf("Successfully read map file\n\n");
+ printf("Successfully read csi map file\n\n");
+ return;
+}
+
+/*-------------------------------------------------*/
+//      READ TIG MAP FILE
+/*-------------------------------------------------*/
+void read_tig_map(char *filename)
+{
+ FILE *map_file=fopen(filename,"r");
+ if(map_file==NULL) {printf("\nError in opening tigress map file\n"); exit(-1);}
+ 
+ int i;
+ 
+ printf("Successfully opened map file\nReading map file\n");
+ for(i=0;i<S2K;i++) {tig_pos[i]=-1;} // Initializes the tig positions
+ for(i=0;i<S2K;i++) {tig_sub[i]=-1;} // Initializes the tig subpositions
+ for(i=0;i<S2K;i++) {tig_seg[i]=-1;} // Initializes the tig segments
+ for(i=0;i<S2K;i++) {tig_charge[i]=-1;} // Initializes the tig charges
+ 
+ char * line=NULL;
+ size_t len=0; ssize_t read;
+ int num_items=0,j;
+ int buf=0;
+ char buf2;
+ while((read=getline(&line,&len,map_file))!=-1)
+ {
+  num_items=sscanf(line,"%d\t%c\t%d\t%c\t%d",&buf,&buf2,&buf,&buf2,&j);
+  num_items=sscanf(line,"%d\t%c\t%d\t%c\t%d",&tig_pos[j],&tig_sub[j],&tig_seg[j],&tig_charge[j],&buf);
+  if(num_items!=5) {printf("Fix map file\n"); exit(-1);}
+ }
+ printf("Successfully read tigress map file\n\n");
+ return;
+}
+
+/*-------------------------------------------------*/
+//      READ SUP MAP FILE
+/*-------------------------------------------------*/
+void read_sup_map(char *filename)
+{
+ FILE *map_file=fopen(filename,"r");
+ if(map_file==NULL) {printf("\nError in opening map file\n"); exit(-1);}
+ 
+ int i;
+ 
+ printf("Successfully opened map file\nReading map file\n");
+ for(i=0;i<S2K;i++) {sup_pos[i]=-1;} // Initializes the sup positions
+ for(i=0;i<S2K;i++) {sup_sub[i]=-1;} // Initializes the sup subpositions
+ for(i=0;i<S2K;i++) {sup_seg[i]=-1;} // Initializes the sup segments
+ for(i=0;i<S2K;i++) {sup_charge[i]=-1;} // Initializes the sup charges
+ 
+ char * line=NULL;
+ size_t len=0; ssize_t read;
+ int num_items=0,j;
+ int buf=0;
+ char buf2=0;
+ while((read=getline(&line,&len,map_file))!=-1)
+ {
+  num_items=sscanf(line,"%d\t%c\t%d\t%c\t%d",&buf,&buf2,&buf,&buf2,&j);
+  num_items=sscanf(line,"%d\t%c\t%d\t%c\t%d",&sup_pos[j],&sup_sub[j],&sup_seg[j],&sup_charge[j],&buf);
+  if(num_items!=5) {printf("Fix map file\n"); exit(-1);}
+ }
+ printf("Successfully read tigress map file\n\n");
  return;
 }
 
