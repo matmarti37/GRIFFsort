@@ -15,18 +15,19 @@ int analyze_fragment(Grif_event* ptr,short* waveform)
   return 0;
  }
  
- int time=ptr->timestamp;
- if(time<prev_timestamp) {out_of_order++;}
- prev_timestamp=time;
-
- int cfd=ptr->cfd;
- if(cfd<prev_cfd) {out_of_order_cfd++;}
- prev_cfd=cfd;
+ long long csi=-1; long long tig=-1; long long sup=-1;
+ 
+ //long long time=ptr->timestamp;
+ long long time=(10*ptr->cfd)/16;
+ if(time<0) {neg_time++;}
+ if(csi_position!=-1) {csi=time;}
+ else if(tig_position!=-1) {tig=time;}
+ else if(sup_position!=-1) {sup=time;}
  
  tot_events++;
  
- FILE *outputfile; outputfile=fopen("simple_timing_data.txt","a");
- fprintf(outputfile,"%d\t%d\t%d\n",tot_events,time,cfd);
+ FILE *outputfile; outputfile=fopen("timing_data.txt","a");
+ fprintf(outputfile,"%lld\t%lld\t%lld\t%lld\n",tot_events,csi,tig,sup);
  fclose(outputfile);
  return 0;
 }
@@ -49,21 +50,16 @@ int main(int argc, char *argv[])
  read_tig_map(tig_map_filename);
  read_sup_map(sup_map_filename);
  
- 
  //char* data_filename=argv[1];
- prev_timestamp=0; out_of_order=0; out_of_order_cfd=0; bad_channel=0;
- double fraction;
+ //double fraction;
+ // clears data file
+ printf("Clearing output file\n\n");
+ FILE *outputfile; outputfile=fopen("timing_data.txt","w"); fclose(outputfile);
  
  // Read data files and perform sort
  sort_data(data_filename);
- 
- printf("Number of out of order timestamps:        %d\n",out_of_order);
- printf("Total number of fragments                 %d\n",tot_events);
- fraction=(double)out_of_order / (double)tot_events;
- printf("Fraction of out of order fragments:       %2.2e\n",fraction);
- printf("\n\nNumber of bad channel numbers:            %d\n",bad_channel);
- 
- printf("\n\nNumber of out of order cfd:               %d\n",out_of_order_cfd);
- 
+ printf("\n%d\n",neg_time);
+ printf("\nLONG LONG:           %lu bytes = %lu bits\n",sizeof(long long),(8*sizeof(long long)));
+ printf("\nINT:                 %lu bytes = %lu bits\n",sizeof(int),(8*sizeof(int)));
  return 0;
 }

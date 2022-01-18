@@ -8,8 +8,8 @@ int unpack_grif_bank(int *data, int length, Grif_event *evptr, int process_wavef
 
    unsigned int *evntbufend = (unsigned *)data + length;
    unsigned int *evntbuf = (unsigned *)data;
-   unsigned *ptr = evntbuf;
- 
+   unsigned *ptr = evntbuf,tag;
+   
    while( evntbuf < evntbufend ){
      if( ((*(ptr++)>>28)&0xff) == 0xE ){
        grif_fragment = evntbuf; grif_fragment_len = ptr-evntbuf;
@@ -89,7 +89,7 @@ int unpack_grif3_event(unsigned *evntbuf, int evntbuflen, Grif_event *ptr, int p
             waveform[(*wave_ptr)++] |= ((value>>13) & 1) ? 0xC000 : 0;
 	    waveform[(*wave_ptr)  ]   =(value & 0xfffc000) >> 14;
             waveform[(*wave_ptr)++] |= ((value>>27) & 1) ? 0xC000 : 0;
-            if(ptr->waveform_length > 1000){ return 0;}                          // Matt's skip line
+            if(ptr->waveform_length > 1000){return 0;}                          // Matt's skip line
 	    //if( done == 0 ){
 	    //   for(i=0; i<evntbuflen; i++){
 	    //	  fprintf(stderr,"  0x%08x", *(evstrt+i) );

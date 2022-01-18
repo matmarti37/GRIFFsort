@@ -11,5 +11,6 @@
 TH1D *h;
 TCanvas *c;  
 TApplication *theApp;
+long long counter;
 
 #endif

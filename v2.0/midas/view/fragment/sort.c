@@ -3,6 +3,8 @@
 /*================================================================*/
 int analyze_fragment(Grif_event* ptr, short* waveform)
 {
+  //if((counter%10000)==0)
+    //{
   printf("=========================================================\n");
   printf("      Time Stamp :   %8ld 0x%8.8lx\n",ptr->timestamp,ptr->timestamp);
   printf("  Trigger number :   %8d\n",ptr->trigger_num&0x0fffffff);
@@ -32,8 +34,8 @@ int analyze_fragment(Grif_event* ptr, short* waveform)
   	}
       h->Draw("HIST");
       theApp->Run(kTRUE);
-    }
-  
+    }//}
+  counter++;
   return 0;
 }
 /*================================================================*/
@@ -41,6 +43,7 @@ int main(int argc, char *argv[])
 {
   int ac;
   char* av[1];
+  counter=0;
 
   ac=1;
   av[0]=(char*) malloc(132);

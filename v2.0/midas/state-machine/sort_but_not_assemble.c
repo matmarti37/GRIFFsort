@@ -9,7 +9,6 @@ int get_fragments(long* proc)
    Grif_event grif_event;
    short waveform[MAX_SAMPLE_LEN];
    int process_waveforms=1;
-
   /* loop over banks, looking for GRFFIN   */
    while(1)
     {

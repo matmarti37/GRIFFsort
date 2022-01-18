@@ -47,12 +47,8 @@ TH1D *uncal_det_h[256];
 TH1D *uncal_ring_h[10];
 
 int ampl_flag=0;
-
-int prev_timestamp;
-int prev_cfd;
-int out_of_order;
-int out_of_order_cfd;
-int tot_events;
+long long tot_events;
 int bad_channel;
+int neg_time=0;
 
 #endif
