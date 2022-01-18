@@ -1,4 +1,4 @@
 DATA_LIST                                DataFiles/DSAM/SingleRun2.txt
-CSI_DETECTOR_MAP                         /home/matmarti/S2043/Maps/MasterMaps/CSI.txt
-TIGRESS_DETECTOR_MAP                     /home/matmarti/S2043/Maps/MasterMaps/TIGRESS.txt
-SUPPRESSOR_DETECTOR_MAP                  /home/matmarti/S2043/Maps/MasterMaps/SUPPRESSOR.txt
+CSI_DETECTOR_MAP                         ~/Software/GRIFFsort/maps/CSI.txt
+TIGRESS_DETECTOR_MAP                     ~/Software/GRIFFsort/maps/TIGRESS.txt
+SUPPRESSOR_DETECTOR_MAP                  ~/Software/GRIFFsort/maps/SUPPRESSOR.txt
