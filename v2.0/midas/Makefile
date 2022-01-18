@@ -17,6 +17,9 @@ all:
 	echo Making TIP_cal.
 	(cd TIP_cal && make -is clean && make && make -is clean && cd ..)
 	echo DONE: TIP_cal.
+	echo Making time.
+	(cd time && make -is clean && make && make -is clean && cd ..)
+	echo DONE: time.
 
 clean:
 	(cd decoder       && make -is clean && cd ..)
@@ -25,6 +28,7 @@ clean:
 	(cd wfit          && make -is clean && cd ..)
 	(cd project       && make -is clean && cd ..)
 	(cd TIP_cal       && make -is clean && cd ..)
+	(cd time          && make -is clean && cd ..)
 	rm -f *~
 
 very-clean:
@@ -35,6 +39,7 @@ very-clean:
 	(cd wfit          && make -is clean && cd ..)
 	(cd project       && make -is clean && cd ..)
 	(cd TIP_cal       && make -is clean && cd ..)
+	(cd time          && make -is clean && cd ..)
 	rm -f *~
 	echo DONE: Making very-clean.
 
