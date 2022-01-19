@@ -18,21 +18,23 @@ int analyze_fragment(Grif_event* ptr,short* waveform)
  if(csi_position!=-1) {csi_count++;}
  
  //long long timestp=ptr->timestamp;
- //long long time=(ptr->timestamp&(~0x3ffff))+(ptr->cfd/1.6); //NO x10 on TIMESTAMP
- //long long time=( (ptr->timestamp)&(~0x3ffff) ) + ((ptr->cfd)/1.6); // WITH x10 on TIMESTAMP
- long long time=(10*ptr->cfd)/16;
- //time=time;
+ 
+ long long time=( (ptr->timestamp)&(~0x3ffff) )*10 + ((10*ptr->cfd)/16); // WITH x10 on TIMESTAMP
+ /* //This gives the same as above
+ long long time=(ptr->timestamp&0xfffffffffffc0000)<<4;
+ time+=ptr->cfd;
+ time*=10;
+ time/=16;
+ */
+ 
  long long diff;
+ 
  
  if(csi_position!=-1)
   {
-   //diff = timestp - prev_timestamp;
-   //int scaling = 1; // time scale adjustor: 1 is ns, 1e3 puts it to us 
-   diff=(time-prev_timestamp);///scaling; // scaling adjusted to change units
+   diff=(time-prev_timestamp);
    time_diff->Fill(diff);
-   //prev_timestamp=timestp;
    prev_timestamp=time;
-   //printf("Channel: %4d     Position: %3d\n",ptr->chan,csi_position);
   }
 
  
@@ -52,7 +54,7 @@ int main(int argc, char *argv[])
  char* param_filename=argv[1];
  read_parameter_file(param_filename);
  
- time_diff=new TH1D("Time Differences","Time Differences",S32K,0,S32K); time_diff->Reset();
+ time_diff=new TH1D("Time Differences","Time Differences",S4K,0,S4K); time_diff->Reset();
  
  // Reads map files
  read_csi_map(csi_map_filename);

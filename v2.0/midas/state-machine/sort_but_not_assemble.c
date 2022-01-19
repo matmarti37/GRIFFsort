@@ -18,7 +18,7 @@ int get_fragments(long* proc)
         swapInt( (char *)bank_data, items*sizeof(int) );
         unpack_grif_bank( bank_data, items, &grif_event, process_waveforms,waveform);
         if((*proc%10000)==0){printf("Number of analyzed fragments is %8ld\r",*proc);}
-        analyze_fragment(&grif_event,waveform);
+        //analyze_fragment(&grif_event,waveform); /////////////
         (*proc)++;
        }
     }

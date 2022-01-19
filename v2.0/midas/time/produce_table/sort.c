@@ -18,7 +18,8 @@ int analyze_fragment(Grif_event* ptr,short* waveform)
  long long csi=-1; long long tig=-1; long long sup=-1;
  
  //long long time=ptr->timestamp;
- long long time=(10*ptr->cfd)/16;
+ //long long time=(10*ptr->cfd)/16;
+ long long time=( (ptr->timestamp)&(~0x3ffff) )*10 + ((10*ptr->cfd)/16); // WITH x10 on TIMESTAMP
  if(time<0) {neg_time++;}
  if(csi_position!=-1) {csi=time;}
  else if(tig_position!=-1) {tig=time;}

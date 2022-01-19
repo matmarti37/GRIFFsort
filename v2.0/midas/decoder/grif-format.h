@@ -29,4 +29,7 @@ typedef struct griffin_fragment_struct {
 int unpack_grif_bank(int *, int, Grif_event *, int, short*);
 int unpack_grif3_event(unsigned*, int, Grif_event*, int,short*);
 void print_fragment_info(Grif_event*);
+
+extern int analyze_fragment(Grif_event*,short*); /////////////
+
 #endif

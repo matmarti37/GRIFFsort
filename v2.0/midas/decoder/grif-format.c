@@ -11,10 +11,14 @@ int unpack_grif_bank(int *data, int length, Grif_event *evptr, int process_wavef
    unsigned *ptr = evntbuf,tag;
    
    while( evntbuf < evntbufend ){
-     if( ((*(ptr++)>>28)&0xff) == 0xE ){
+     tag=((*(ptr++)>>28)&0xff);
+     if( (tag == 0xE) ){
        grif_fragment = evntbuf; grif_fragment_len = ptr-evntbuf;
-       if( unpack_grif3_event( evntbuf, ptr-evntbuf, evptr, process_waveforms,waveform ) ){return(-1);}
-       return(ptr-evntbuf);
+       //if( unpack_grif3_event( evntbuf, ptr-evntbuf, evptr, process_waveforms,waveform ) ){return(-1);}
+       unpack_grif3_event( grif_fragment, grif_fragment_len, evptr, process_waveforms,waveform )
+       //return(ptr-evntbuf); /////////////
+       analyze_fragment(evptr,waveform); /////////////
+       evntbuf+=grif_fragment_len; /////////////
      }
    }
    return(0); 
