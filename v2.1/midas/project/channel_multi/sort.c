@@ -4,7 +4,7 @@
 int analyze_fragment(Grif_event* ptr, short* waveform)
 {
   float v;
-  if(ptr->chan==channel)
+  if(ptr->chan>=channel_low && ptr->chan<=channel_high)
       {
 	v=(float)ptr->energy/(float)divider;
 	h->Fill(v);
@@ -20,15 +20,16 @@ int main(int argc, char *argv[])
   char *av[1];
   char name[132];
 
-  if(argc!=4)
+  if(argc!=5)
     {
-      printf("project_channel input_file channel divider\n");
+      printf("project_channel input_file channel_low channel_high divider\n");
       exit(-1);
     }
-  channel=atoi(argv[2]);
-  divider=atoi(argv[3]);
+  channel_low=atoi(argv[2]);
+  channel_high=atoi(argv[3]);
+  divider=atoi(argv[4]);
  
-  h=new TH1D("","",S65K,0,S65K);
+  h=new TH1D("","",S32K,0,S32K);
   sprintf(name,"ch. %s",argv[2]);
   h->Reset();
   h->SetName(name);

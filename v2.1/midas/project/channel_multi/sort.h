@@ -10,7 +10,8 @@
 #include "TApplication.h"
 
 TH1D *h;
-int channel;
+int channel_low;
+int channel_high;
 int divider;
 
 #endif

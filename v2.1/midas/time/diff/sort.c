@@ -20,7 +20,9 @@ int analyze_fragment(Grif_event* ptr,short* waveform)
  //long long timestp=ptr->timestamp;
  //long long time=(ptr->timestamp&(~0x3ffff))+(ptr->cfd/1.6); //NO x10 on TIMESTAMP
  //long long time=( (ptr->timestamp)&(~0x3ffff) ) + ((ptr->cfd)/1.6); // WITH x10 on TIMESTAMP
- long long time=(10*ptr->cfd)/16;
+ long long time=( (ptr->timestamp)&(~0x3ffff) )*10 + ((10*ptr->cfd)/16);
+ 
+ //long long time=(10*ptr->cfd)/16;
  //time=time;
  long long diff;
  
