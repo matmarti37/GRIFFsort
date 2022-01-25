@@ -1,0 +1,17 @@
+CC = g++
+CFLAGS   = -O -Wall -fPIC
+ROOT =  $(shell $(ROOTSYS)/bin/root-config --glibs)
+INC = -I$(GRIFFsort)/current/midas/decoder\
+      -I$(GRIFFsort)/current/midas/state-machine
+BIN=$(GRIFFsort)/bin/midas
+SORT= sort.o\
+       $(GRIFFsort)/current/midas/state-machine/sort_and_assemble_list.a\
+       $(GRIFFsort)/current/midas/decoder/decoder.a
+sort:$(SORT)
+	$(CC) -o $(BIN)/read_list $(SORT) $(CFLAGS) $(ROOT) -lm -ldl
+
+sort.o:sort.c 
+	$(CC) -c -o sort.o sort.c $(CFLAGS) $(INC)
+
+clean:
+	rm -rf sort *.o *~
