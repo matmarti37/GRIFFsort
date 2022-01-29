@@ -12,6 +12,7 @@ int analyze_fragment(Grif_event* ptr,short* waveform)
  if(csi_position==-1 && tig_position==-1 && sup_position==-1)
  {
   bad_channel++;
+  tot_count++;
   return 0;
  }
  
@@ -37,7 +38,7 @@ int analyze_fragment(Grif_event* ptr,short* waveform)
    //printf("Channel: %4d     Position: %3d\n",ptr->chan,csi_position);
   }
 
- 
+ tot_count++;
  return 0;
 }
  
@@ -62,6 +63,7 @@ int main(int argc, char *argv[])
  read_sup_map(sup_map_filename);
  
  prev_timestamp=0; bad_channel=0; csi_count=0;
+ tot_count=0;
  
  // Read data files and perform sort
  sort_data(data_filename);
@@ -76,6 +78,7 @@ int main(int argc, char *argv[])
  
  printf("Bad Channels: %d\n",bad_channel);
  printf("CSI Channels: %d\n",csi_count);
+ printf("Total Counts: %lld\n",tot_count);
  
  
  return 0;
