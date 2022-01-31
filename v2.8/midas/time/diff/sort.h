@@ -53,4 +53,6 @@ int csi_count;
 long long prev_timestamp;
 TH1D *time_diff;
 
+long long tot_count;
+
 #endif
