@@ -629,7 +629,7 @@ void calibrate_TIGRESS(raw_event *raw_event, TIGRESS_calibration_parameters *TIG
 											ren=raw_event->tg.det[pos].ge[col].seg[0].charge+ran;
 											e=TIGRESS_cal_par->ce[pos][col][0]+TIGRESS_cal_par->ce[pos][col][1]*ren+TIGRESS_cal_par->ce[pos][col][2]*ren*ren;
 											if(e>0)
-												if(e<S65K)
+											  if(e<(S65K))
 													{
 														TIGRESS_cal_ev->det[pos].ge[col].seg[0].E=e;
 														TIGRESS_cal_ev->det[pos].ge[col].h.FE++;

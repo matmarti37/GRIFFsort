@@ -239,6 +239,9 @@ void read_map(char* name,gmap* map)
 		      }
 		    fclose(tsup_inp);		    
 		  }
+
+		if(strcmp(str1,"TIG_KPAR")==0)
+		  map->tig_kpar=atoi(str2);
 		
 	      
 	    }

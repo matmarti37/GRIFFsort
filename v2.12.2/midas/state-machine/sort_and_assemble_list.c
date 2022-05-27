@@ -56,7 +56,8 @@ int map_event(raw_event* data,node *ptr, gmap* map)
 		      {
 			if(ptr->ch.charge>0)
 			  {
-			    data->tg.det[pos].ge[col].seg[seg].charge=ptr->ch.charge;
+			    //data->tg.det[pos].ge[col].seg[seg].charge=ptr->ch.charge;
+			    data->tg.det[pos].ge[col].seg[seg].charge=ptr->ch.charge/map->tig_kpar;
 			    data->tg.det[pos].ge[col].h.EHP|=(one<<seg);
 			    data->tg.det[pos].ge[col].h.Efold++;
 			    take|=1;

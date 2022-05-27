@@ -23,9 +23,10 @@ typedef struct gmap
   char    title[256];
   char    tccmap[256];
   char    tsegmap[256];
-  char    tsupmap[256]; 
+  char    tsupmap[256];
   int     tig_min;
   int     tig_max;
+  int     tig_kpar;
   chstr   hpge_lt[TIGPOSLT];
   chstr   supp_lt[TIGPOSLT];
   int     csiarray_min;
