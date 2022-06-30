@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 			   curr.trig=trigger;
 			   fseek(fl,-son,SEEK_CUR);
 			   fwrite(&curr,son,1,fl);
-			   memcpy(&prev,&curr,son);//store to the previous	   
+			   memcpy(&prev,&curr,son);//store to the previous      ///// I THINK THIS NEEDS TO BE DELETED	   
 			 }
 		       else//new event
 			 {

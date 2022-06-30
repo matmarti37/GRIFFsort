@@ -1,0 +1,60 @@
+#include "sort.h"
+
+int analyze_data(raw_event *data)
+{
+  int fold=data->csiarray.h.TSfold;
+  long long ts1=0, ts2=0, ts, tsup, tsns, diff;
+
+  if(fold==2)
+    {
+      for(int pos=0;pos<NCSI;pos++)
+	{
+	  if(((data->csiarray.h.TSHP[pos/64]&(1<<pos%64))==1))
+	    {
+	      ts=(long long)data->csiarray.csi[pos].timestamp;
+	      tsup=(long long)((data->csiarray.csi[pos].timestamp_up)<<32)&0xffff;
+	      printf("%16lld\n",ts);
+	      printf("%16lld\n",tsup);
+	      tsns=10.*(ts+data->csiarray.wfit[pos].t[0]-200);
+	      if(ts1!=0)
+		ts1=ts;
+	      else
+		ts2=ts;
+	    }
+	}
+    }
+  if(ts1<ts2)
+    diff=ts2-ts1;
+  else
+    diff=ts1-ts2;
+  h->Fill(diff);
+  return SEPARATOR_DISCARD;
+}
+/*====================================================================*/
+int main(int argc, char *argv[])
+{
+  input_names_type* name;
+
+  if(argc!=2)
+    {
+      printf("display_RawEvent sfu_input_data\n");
+      exit(-1);
+    }
+  
+  printf("Program displays raw events.\n");
+
+  h=new TH1D("TDiff","TDiff",S2K,-S1K,S1K); h->Reset();
+  
+  name=(input_names_type*)malloc(sizeof(input_names_type));
+  memset(name,0,sizeof(input_names_type));
+  strcpy(name->fname.inp_data,argv[1]);
+  sort(name);
+
+  TFile f("TIPDifferences.root","recreate");
+  h->GetXaxis()->SetTitle("Time Difference [ns]");
+  h->GetXaxis()->CenterTitle(true);
+  h->GetYaxis()->SetTitle("Counts");
+  h->GetYaxis()->CenterTitle(true);
+  h->GetYaxis()->SetTitleOffset(0);
+  h->Write();
+}
