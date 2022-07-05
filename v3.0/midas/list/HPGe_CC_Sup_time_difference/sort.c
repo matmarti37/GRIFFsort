@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 	      if(CC_channel(&next,&map)==1)
 		{
 
-		  if((trig=next.trig)<1)
+		  if((trig=next.tig_trig)<1)
 		    {
 		      printf("Incorrect TIGRESS CC trigger %d at tsns %16lld channel %d. Exiting\n",trig,current.tsns,current.chan);
 		      exit(0);

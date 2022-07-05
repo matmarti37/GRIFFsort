@@ -16,7 +16,8 @@ TH1D *h;
 TCanvas *c;  
 TApplication *theApp;
 
-int hist[S32K];
+//int hist[S32K];
+int hist[16][S32K];
 unsigned long long window;
 
 int analyze_list(int,int,node*){return -1;};

@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
       exit(-2);
     }
 
+  int position;
   son=sizeof(node);
   window=atoi(argv[3]);
   read_map(argv[2],&map);
@@ -60,10 +61,12 @@ int main(int argc, char *argv[])
 		break;
 	      if(Seg_channel(&next,&map)==1)
 		if(same_HPGe(&current,&next,&map)==1)
-		  {		  
+		  {
+		    position=map.hpge_lt[next.chan-map.tig_min].pos;
+		    //printf("%d\n",position);
 		    h->Fill((int)dt);
 		    if(dt<S16K)
-		      hist[S16K+dt]++;
+		      hist[position][S16K+dt]++;
 		  }
 	    }
 	  fseek(inp,pos,SEEK_SET);
@@ -81,10 +84,11 @@ int main(int argc, char *argv[])
 		break;
 	      if(CC_channel(&next,&map)==1)
 		if(same_HPGe(&next,&current,&map)==1)
-		  {		  
+		  {
+		    position=map.hpge_lt[current.chan-map.tig_min].pos;
 		    h->Fill(-(int)dt);
 		    if(dt<S16K)
-		      hist[S16K-dt]++;
+		      hist[position][S16K-dt]++;
 		  }	      
 	      
 	    }
