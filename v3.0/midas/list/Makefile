@@ -91,6 +91,18 @@ all:
 	(cd  apply_trigger r && make -is clean && make && make -is clean && cd ..)
 	echo DONE: apply_trigger
 
+	echo Making add_trigger_to_Seg.
+	(cd  add_trigger_to_Seg r && make -is clean && make && make -is clean && cd ..)
+	echo DONE: add_trigger_to_Seg.
+
+	echo Making add_trigger_to_Sup.
+	(cd  add_trigger_to_Sup r && make -is clean && make && make -is clean && cd ..)
+	echo DONE: add_trigger_to_Sup.
+
+	echo Making reset.
+	(cd  reset && make -is clean && make && make -is clean && cd ..)
+	echo DONE: reset.
+
 clean:
 	(cd read                        && make -is clean && cd ..)
 	(cd display                     && make -is clean && cd ..)
@@ -115,4 +127,7 @@ clean:
 	(cd TIP_trigger                 && make -is clean && cd ..)
 	(cd clear_trigger               && make -is clean && cd ..)
 	(cd apply_trigger               && make -is clean && cd ..)
+	(cd add_trigger_to_Seg          && make -is clean && cd ..)
+	(cd add_trigger_to_Sup          && make -is clean && cd ..)
+	(cd reset                       && make -is clean && cd ..)
 	rm -f *~
