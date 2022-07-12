@@ -470,8 +470,8 @@ int analyze_fragment_for_assembly(Grif_event* ptr, short* waveform,data_pointers
   
   add_node(&nd,dp,list);
  
-  
- return 0;
+
+  return 0;
 }
 
 /*================================================================*/
