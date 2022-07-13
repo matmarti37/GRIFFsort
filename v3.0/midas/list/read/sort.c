@@ -35,14 +35,20 @@ int main(int argc, char *argv[])
   
   i=0;
   int tip_count=0;
+  //int cfd_count=0;
+  //int cfd_small=0;
   while(fread(&nd,son,1,inp)==1)
     {     
       analyze_list(1,i,&nd);
       if(nd.chan>1000 && nd.trig>0) tip_count++;
+      //if(nd.ch.cfd<2 && nd.trig>0) cfd_small++;
+      //if(nd.ch.cfd<2) cfd_count++;
       //if((i%1000)==0) getchar();
       i++;
     };
   printf("Number of TIP channels with TRIGGER:  %d\n",tip_count);
+  //printf("Number of CFD smalls   with TRIGGER:  %d\n",cfd_small);
+  //printf("Number of CFD smalls withoutTRIGGER:  %d\n",cfd_count);
   
  
 
