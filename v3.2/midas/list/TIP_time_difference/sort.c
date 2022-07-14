@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
 
       if(TIP_channel(&current,&map)==1)
       	{
-	  /* if(current.wfit.type!=1) */
-	  /*   continue; */
+	  if(current.wfit.type!=1)
+	    continue;
 	  
       	  pos=ftell(inp);//save current position
 
@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
       		break;
       	      if(TIP_channel(&next,&map)==1)
       		{
-		  /* if(next.wfit.type!=1) */
-		  /*   continue; */
+		  if(next.wfit.type!=1)
+		    continue;
       		  h->Fill((int)dt);
       		  if(dt<S16K)
       		    hist[S16K+dt]++;
@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
 
       if(TIP_channel(&current,&map)==1)
 	{
-	  /* if(current.wfit.type!=1) */
-	  /*   continue; */
+	  if(current.wfit.type!=1)
+	    continue;
 	  pos=ftell(inp);//save current position
 	  while(1)
 	    {
@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
 	      
 	      if(TIP_channel(&next,&map)==1)
 		{
-		  /* if(next.wfit.type!=1) */
-		  /*   continue; */
+		  if(next.wfit.type!=1)
+		    continue;
 		  h->Fill(-(int)dt);
 		  if(dt<S16K)
 		    hist[S16K-dt]++;

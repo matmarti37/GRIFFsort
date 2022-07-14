@@ -17,11 +17,12 @@ int main(int argc, char *argv[])
   if(argc!=4)
     {
       printf("list_TIP_trigger fragment_list map gate_in_ns\n");
+      printf("Program assigns trigger number to TIP type-1 events on a list of fragments created from GRIF3/GRIF4 midas file.\n");
       exit(-1);
     }
   
  
-  printf("Program assigns trigger number to TIP events on a list of fragments created from GRIF3/GRIF4 midas file.\n");
+  printf("Program assigns trigger number to TIP type-1 events on a list of fragments created from GRIF3/GRIF4 midas file.\n");
 
 
   read_map(argv[2],&map);
@@ -44,9 +45,7 @@ int main(int argc, char *argv[])
 	 if((curr.ch.timestamp|curr.ch.timestamp_up)!=0)//ignore bad events at the start
 	   if(curr.chan>=map.csiarray_min)//check the range for TIP channels
 	     if(curr.chan<=map.csiarray_max)//check the range for TIP channels
-	       //if(map.hpge_lt[curr.chan-map.tig_min].seg==0)//channel present on the CC list
-	       //if(map.hpge_lt[curr.chan-map.tig_min].pos>0)//channel present on the CC list
-	       //if(map.hpge_lt[curr.chan-map.tig_min].pos<NPOSTIGR)//channel present on the CC list	       
+	       if(curr.wfit.type==1)
 		     {
 		       if(prev.tsns==0)//the first channel since previous not stored
 			 {
