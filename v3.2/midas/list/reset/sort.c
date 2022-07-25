@@ -28,6 +28,8 @@ int main(int argc, char *argv[])
     while(1)
       {
 	if(fread(&curr,son,1,fl)!=1) break; //stop on incorrect reading
+	if(curr.tig_trig==-1 && curr.csi_trig==-1 && curr.trig_tsns==0x000000000000 && curr.trig==-1)
+	  continue;
 	curr.tig_trig=-1;
 	curr.csi_trig=-1;
 	curr.trig_tsns=0x000000000000;

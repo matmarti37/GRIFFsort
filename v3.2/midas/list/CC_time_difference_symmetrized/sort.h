@@ -5,7 +5,6 @@
 #include "SFU-common.h"
 #include "sort_and_assemble_list.h"
 
-
 #include "TH1D.h"
 #include "TStyle.h"
 #include "TCanvas.h"
@@ -16,10 +15,7 @@ TH1D *h;
 TCanvas *c;  
 TApplication *theApp;
 
-//int hist[S32K];
-int hist[NPOSTIGR][S32K];
-//int hist[32][S32K];
-//int hist[128][S32K];
+int hist[S32K];
 unsigned long long window;
 
 int analyze_list(int,int,node*){return -1;};

@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
       exit(-2);
     }
 
-  int position;
+  int position,colour;
   son=sizeof(node);
   window=atoi(argv[3]);
   read_map(argv[2],&map);
@@ -38,6 +38,10 @@ int main(int argc, char *argv[])
   if(c!=NULL) delete c;
   c = new TCanvas("TS", "TS",10,10, 700, 500);
 
+  /* current.chan=9; */
+  /* printf("%d\n",CC_channel(&current,&map)); */
+  /* getc(stdin); */
+
   while(1)
     {
       if(fread(&current,son,1,inp)!=1)
@@ -47,7 +51,8 @@ int main(int argc, char *argv[])
 	{
 	  if((trig=current.tig_trig)<1)
 	    {
-	      printf("Incorrect TIGRESS CC trigger %d at tsns %16lld channel %d. Exiting\n",trig,current.tsns,current.chan);
+	      printf("aIncorrect TIGRESS CC trigger %d at tsns %16lld channel %d. Exiting\n",trig,current.tsns,current.chan);
+	      print_map(&map);
 	      exit(0);
 	    }
 	  pos=ftell(inp);//save current position
@@ -63,10 +68,11 @@ int main(int argc, char *argv[])
 		if(same_HPGe(&current,&next,&map)==1)
 		  {
 		    position=map.hpge_lt[next.chan-map.tig_min].pos;
-		    //printf("%d\n",position);
+		    //colour=map.hpge_lt[next.chan-map.tig_min].seg;
 		    h->Fill((int)dt);
 		    if(dt<S16K)
 		      hist[position][S16K+dt]++;
+		      //hist[8*(position-1)+colour][S16K+dt]++;
 		  }
 	    }
 	  fseek(inp,pos,SEEK_SET);
@@ -79,18 +85,29 @@ int main(int argc, char *argv[])
 	    {
 	      if(fread(&next,son,1,inp)!=1)
 		break;
+	      /* if(next.tsns>2682750000) */
+	      /* 	printf("CHAN %d TSNS %16lld CCCHAN %d\n",next.chan,next.tsns,CC_channel(&next,&map)); */
 	      dt=next.tsns-current.tsns;	      
 	      if(dt>window)
 		break;
 	      if(CC_channel(&next,&map)==1)
-		if(same_HPGe(&next,&current,&map)==1)
-		  {
-		    position=map.hpge_lt[current.chan-map.tig_min].pos;
-		    h->Fill(-(int)dt);
-		    if(dt<S16K)
-		      hist[position][S16K-dt]++;
-		  }	      
-	      
+		{
+		  if((trig=next.tig_trig)<1)
+		    {
+		      printf("bbbIncorrect TIGRESS CC trigger %d at tsns %16lld channel %d. Exiting\n",trig,next.tsns,next.chan);
+		      print_map(&map);
+		      exit(0);
+		    }
+		  if(same_HPGe(&current,&next,&map)==1)
+		    {
+		      position=map.hpge_lt[current.chan-map.tig_min].pos;
+		      //colour=map.hpge_lt[current.chan-map.tig_min].seg;
+		      h->Fill(-(int)dt);
+		      if(dt<S16K)
+			hist[position][S16K-dt]++;
+			//hist[8*(position-1)+colour][S16K-dt]++;
+		    }
+		}
 	    }
 	  fseek(inp,pos,SEEK_SET);	  
 	}
@@ -106,8 +123,10 @@ int main(int argc, char *argv[])
   fwrite(hist,sizeof(hist),1,output);
   fclose(output);
 
-  h->Draw("HIST");
-  theApp->Run(kTRUE);
+  //h->Draw("HIST");
+  //theApp->Run(kTRUE);
+
+  print_map(&map);
 
   
 }
