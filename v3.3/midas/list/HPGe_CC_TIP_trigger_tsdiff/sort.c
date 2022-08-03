@@ -55,10 +55,6 @@ int main(int argc, char *argv[])
 	    {
 	      if(fread(&next,son,1,inp)!=1)
 		break;
-	      //printf("%16lld\n",dt);
-	      //dt=next.tsns-current.tsns;
-	      /* if(dt>window) */
-	      /* 	break; */
 	      if(TIP_channel(&next,&map)==1)
 		{
 		  dt=next.trig_tsns-current.trig_tsns;
@@ -74,14 +70,16 @@ int main(int argc, char *argv[])
 
       if(TIP_channel(&current,&map)==1)
 	{
+	  if((trig=current.csi_trig)<1)
+	    {
+	      printf("Incorrect TIP trigger %d at tsns %16lld channel %d. Exiting\n",trig,current.tsns,current.chan);
+	      exit(0);
+	    }
 	  pos=ftell(inp);//save current position
 	  while(1)
 	    {
 	      if(fread(&next,son,1,inp)!=1)
 		break;
-	      //dt=next.tsns-current.tsns;
-	      /* if(dt>window) */
-	      /* 	break; */
 	      if(CC_channel(&next,&map)==1)
 		{
 		  dt=next.trig_tsns-current.trig_tsns;

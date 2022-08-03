@@ -32,14 +32,7 @@ int main(int argc, char *argv[])
   son=sizeof(node);
   t_low=atoi(argv[3]);
   t_high=atoi(argv[4]);
-  //window=atoi(argv[3]);
   read_map(argv[2],&map);
-  /* memset(&hist,0,sizeof(hist)); */
-  /* theApp=new TApplication("App", &argc, argv); */
-  /* if(h!=NULL) delete h; */
-  /* h=new TH1D("TSdiff","TSdiff",S32K,-S16K,S16K); */
-  /* if(c!=NULL) delete c; */
-  /* c = new TCanvas("TS", "TS",10,10, 700, 500); */
 
   while(1)
     {
@@ -132,29 +125,6 @@ int main(int argc, char *argv[])
 	    }
 	  fseek(inp,pos,SEEK_SET);
 	}
-
-
-      /* if(CC_channel(&current,&map)==1) */
-      /* 	{ */
-      /* 	  pos=ftell(inp);//save current position */
-      /* 	  while(1) */
-      /* 	    { */
-      /* 	      if(fread(&next,son,1,inp)!=1) */
-      /* 		break; */
-      /* 	      dt=next.tsns-current.tsns;	       */
-      /* 	      if(dt>window) */
-      /* 		break; */
-	      
-      /* 	      if(TIP_channel(&next,&map)==1) */
-      /* 		{		   */
-      /* 		  h->Fill(-(int)dt); */
-      /* 		  if(dt<S16K) */
-      /* 		    hist[S16K-dt]++; */
-      /* 		}	       */
-	      
-      /* 	    } */
-      /* 	  fseek(inp,pos,SEEK_SET);	   */
-      /* 	} */
     }
 
   fclose(inp);
