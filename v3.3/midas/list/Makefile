@@ -103,6 +103,10 @@ all:
 	(cd  reset && make -is clean && make && make -is clean && cd ..)
 	echo DONE: reset.
 
+	echo Making test_doubletrigger.
+	(cd  test_doubletrigger && make -is clean && make && make -is clean && cd ..)
+	echo DONE: test_doubletrigger.
+
 clean:
 	(cd read                        && make -is clean && cd ..)
 	(cd display                     && make -is clean && cd ..)
@@ -130,4 +134,5 @@ clean:
 	(cd add_trigger_to_Seg          && make -is clean && cd ..)
 	(cd add_trigger_to_Sup          && make -is clean && cd ..)
 	(cd reset                       && make -is clean && cd ..)
+	(cd test_doubletrigger          && make -is clean && cd ..)
 	rm -f *~
