@@ -11,9 +11,11 @@
 #include "TCanvas.h"
 #include "TFile.h"
 #include "TApplication.h"
-//#include "TCutG.h"
 
-TH2D *h[NCSI];
-TH2D *h_ring[10];
+#include "TCutG.h"
+TCutG *pGate = new TCutG();
+
+TH2D *h;
+int  hist[NCSI][S32K];
 calibration_parameters* cal_par;
 #endif

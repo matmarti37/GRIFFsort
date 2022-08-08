@@ -71,8 +71,11 @@ int main(int argc, char *argv[])
 		    //colour=map.hpge_lt[next.chan-map.tig_min].seg;
 		    h->Fill((int)dt);
 		    if(dt<S16K)
-		      hist[position][S16K+dt]++;
-		      //hist[8*(position-1)+colour][S16K+dt]++;
+		      {
+			hist[0][S16K+dt]++;
+			hist[position][S16K+dt]++;
+			//hist[8*(position-1)+colour][S16K+dt]++;
+		      }
 		  }
 	    }
 	  fseek(inp,pos,SEEK_SET);
@@ -104,8 +107,11 @@ int main(int argc, char *argv[])
 		      //colour=map.hpge_lt[current.chan-map.tig_min].seg;
 		      h->Fill(-(int)dt);
 		      if(dt<S16K)
-			hist[position][S16K-dt]++;
-			//hist[8*(position-1)+colour][S16K-dt]++;
+			{
+			  hist[0][S16K-dt]++;
+			  hist[position][S16K-dt]++;
+			  //hist[8*(position-1)+colour][S16K-dt]++;
+			}
 		    }
 		}
 	    }
@@ -123,10 +129,11 @@ int main(int argc, char *argv[])
   fwrite(hist,sizeof(hist),1,output);
   fclose(output);
 
-  //h->Draw("HIST");
-  //theApp->Run(kTRUE);
+  h->Draw("HIST");
+  theApp->Run(kTRUE);
 
   print_map(&map);
 
+  printf("Histogram contains sum in channel 0 and each of the 16 detectors in channels 1-16\n");
   
 }

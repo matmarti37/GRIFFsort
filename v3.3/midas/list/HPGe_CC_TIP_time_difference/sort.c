@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
 	      if(dt>window)
 	      	break;
 	      if(TIP_channel(&next,&map)==1)
+		if(next.wfit.type==1)
 		{		  
 		  h->Fill((int)dt);
 		  if(dt<S16K)
@@ -69,6 +70,7 @@ int main(int argc, char *argv[])
 	}
 
       if(TIP_channel(&current,&map)==1)
+	if(current.wfit.type==1)
 	{
 	  pos=ftell(inp);//save current position
 	  while(1)

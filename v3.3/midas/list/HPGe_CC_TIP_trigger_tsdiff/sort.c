@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
     {
       if(fread(&current,son,1,inp)!=1)
       	break;
+      if((current.ch.timestamp|current.ch.timestamp_up)!=0)//ignore bad events at the start
 
       if(CC_channel(&current,&map)==1)
 	{
@@ -56,6 +57,7 @@ int main(int argc, char *argv[])
 	      if(fread(&next,son,1,inp)!=1)
 		break;
 	      if(TIP_channel(&next,&map)==1)
+		if(next.wfit.type==1)
 		{
 		  dt=next.trig_tsns-current.trig_tsns;
 		  if(dt>window)
@@ -69,6 +71,7 @@ int main(int argc, char *argv[])
 	}
 
       if(TIP_channel(&current,&map)==1)
+	if(current.wfit.type==1)
 	{
 	  if((trig=current.csi_trig)<1)
 	    {

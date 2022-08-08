@@ -24,7 +24,9 @@ int analyze_data(raw_event *data)
 	  r=100*(data->csiarray.wfit[pos].am[3]/data->csiarray.wfit[pos].am[2])+100;
 	  if(e>=0 && e<S32K)
 	    {
-	      h->Fill(e,r);
+	      h[0]->Fill(e,r);
+	      h[pos]->Fill(e,r);
+	      h_ring[cev->csiarray.ring[pos]]->Fill(e,r);
 	    }
 	}
   free(cev);
@@ -33,21 +35,33 @@ int analyze_data(raw_event *data)
 /*====================================================================================*/
 int main(int argc, char *argv[])
 {
-  FILE * output;
+  //FILE * output;
   input_names_type* name;
   TCanvas *canvas;
   TApplication *theApp;
+  char histname[32];
+  //TFile* g;
 
   if(argc!=2)
     {
       printf("CsIArray_PID master_file_name\n");
       exit(-1);
     }
-  
-  h = new TH2D("PID","PID",S32K,0,S32K-1,150,100,249);
-  h->Reset();
 
-  printf("Program sorts PID plot for the CsIArray.\n");
+  for(int i=0;i<NCSI;i++)
+    {
+      sprintf(histname,"PID_%3d",i);
+      h[i] = new TH2D(histname,histname,S32K,0,S32K-1,150,100,249);
+      h[i]->Reset();
+    }
+  for(int i=0;i<10;i++)
+    {
+      sprintf(histname,"PID_R%1d",i);
+      h_ring[i] = new TH2D(histname,histname,S32K,0,S32K-1,150,100,249);
+      h_ring[i]->Reset();
+    }
+
+  printf("Program sorts PID plot for the CsIArray. 0 is sum, i is det number\n");
   name=(input_names_type*)malloc(sizeof(input_names_type));
   memset(name,0,sizeof(input_names_type));
   cal_par=(calibration_parameters*)malloc(sizeof(calibration_parameters));
@@ -58,6 +72,12 @@ int main(int argc, char *argv[])
   if(name->flag.inp_data!=1)
     {
       printf("ERROR!!! Input data file not defined!\n");
+      exit(EXIT_FAILURE);
+    }
+
+  if(name->flag.root_output_file!=1)
+    {
+      printf("ERROR!!! Output data file not defined!\n");
       exit(EXIT_FAILURE);
     }
 
@@ -72,40 +92,46 @@ int main(int argc, char *argv[])
       exit(EXIT_FAILURE);
     }
   
-  sort(name);
-
-  /*
-  if((output=fopen("CsIArray_ECal.mca","w"))==NULL)
-    {
-      printf("ERROR!!! I cannot open the mca file!");
-      exit(EXIT_FAILURE);
-    }
-  for(int pos=0;pos<NCSI;pos++)
-    fwrite(hist[pos],S32K*sizeof(int),1,output);
+  /* if(name->flag.root_gate_file==1) */
+  /*   { */
+  /*     g=new TFile(name->fname.root_gate_file,"READ"); */
+  /*     pGate=(TCutG *) gROOT->FindObject("cut_0"); */
+  /*   } */
   
-  fclose(output);
-  */
+  sort(name);
   
   theApp=new TApplication("App", &argc, argv);
   canvas = new TCanvas("PID","PID",10,10, 500, 300);
   gPad->SetLogz(1);
   gStyle->SetPalette(1);
-  h->Draw("COLZ");
+  h[0]->Draw("COLZ");
 
-  char *output_filename="testing.root";
+  char *output_filename=name->fname.root_output_file;
+  printf("%s\n",output_filename);
   TFile f(output_filename,"recreate");
- 
- if(h->GetEntries())
- {
-  h->GetXaxis()->SetTitle("Energy [keV]");
-  h->GetXaxis()->CenterTitle(true);
-  h->GetYaxis()->SetTitle("A_{S}/A_{F} \\times 100 + 100");
-  h->GetYaxis()->CenterTitle(true);
-  h->GetYaxis()->SetTitleOffset(0);
-  h->SetOption("COLZ");
-  h->SetStats(0);
-  h->Write();
- }
+
+  for(int i=0;i<NCSI;i++)
+    {
+      h[i]->GetXaxis()->SetTitle("Energy [keV]");
+      h[i]->GetXaxis()->CenterTitle(true);
+      h[i]->GetYaxis()->SetTitle("A_{S}/A_{F} \\times 100 + 100");
+      h[i]->GetYaxis()->CenterTitle(true);
+      h[i]->GetYaxis()->SetTitleOffset(0);
+      h[i]->SetOption("COLZ");
+      h[i]->SetStats(0);
+      h[i]->Write();
+    }
+  for(int i=0;i<10;i++)
+    {
+      h_ring[i]->GetXaxis()->SetTitle("Energy [keV]");
+      h_ring[i]->GetXaxis()->CenterTitle(true);
+      h_ring[i]->GetYaxis()->SetTitle("A_{S}/A_{F} \\times 100 + 100");
+      h_ring[i]->GetYaxis()->CenterTitle(true);
+      h_ring[i]->GetYaxis()->SetTitleOffset(0);
+      h_ring[i]->SetOption("COLZ");
+      h_ring[i]->SetStats(0);
+      h_ring[i]->Write();
+    }
   
   
   theApp->Run(kTRUE);
