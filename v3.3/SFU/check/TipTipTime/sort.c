@@ -18,11 +18,11 @@ int analyze_data(raw_event *data)
 	  if(((data->csiarray.h.TSHP[pos/64]&(one<<pos%64))!=0))
 	    {
 	      ts=(data->csiarray.csi[pos].timestamp)&(0xffffffff);
-	      printf("Timestamp:   %ld\n",ts);
+	      /* printf("Timestamp:   %ld\n",ts); */
 	      tsup=(data->csiarray.csi[pos].timestamp_up&0xffff);
-	      printf("Timestamp up: %ld\n",tsup);
+	      /* printf("Timestamp up: %ld\n",tsup); */
 	      tsns=ts|(tsup<<32);
-	      printf("Timestamp ns: %ld\n",tsns);
+	      /* printf("Timestamp ns: %ld\n",tsns); */
 
 	      tsns*=10;
 	      tsns+=(uint64_t)(10.*(data->csiarray.wfit[pos].t[0]));
@@ -35,15 +35,15 @@ int analyze_data(raw_event *data)
 	    }
 	}
 
-      printf("TS 1:           %lu\n",ts1);
-      printf("TS 2:           %lu\n",ts2);
+      //printf("TS 1:           %lu\n",ts1);
+      //printf("TS 2:           %lu\n",ts2);
       if(ts1<ts2)
 	diff=ts2-ts1;
       else
 	diff=ts1-ts2;
-      printf("Difference:   %ld\n",diff);
+      //printf("Difference:   %ld\n",diff);
       h->Fill(diff);
-      getc(stdin);
+      //getc(stdin);
     }
   return SEPARATOR_DISCARD;
 }
