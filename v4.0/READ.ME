@@ -93,6 +93,11 @@ midas_view_fragment midas_input_data
 
 No clue.
 /*==============================================================*/
+midas_view_hist_tsup
+midas_view_hist_tsup midas_input_data
+
+Fills a histogram of all the values for the upper bits of the timestamp for events in a midas file. This is useful verifying the evolution of the timestamp during a given run or subrun as well as inspecting any overflow from previous runs' buffers. This information can be taken and used as an optional parameter in midas2list (max_TSUP) which prevents the erroneous values in the buffer from affecting the data run.
+/*==============================================================*/
 midas_view_timing
 midas_view_timing midas_input_data
 
@@ -270,7 +275,7 @@ No clue.
 list_check_order
 list_check_order list_input_data
 
-No clue.
+Verifies that the .list file is time ordered.
 /*==============================================================*/
 list_clear_trigger
 list_clear_trigger fragment_list
@@ -280,7 +285,7 @@ No clue.
 list_combine
 list_combine list_of_subrun_lists output_list_name
 
-No clue.
+Takes a list of subrun .list files and combines them into a single, larger .list file. This is to avoid exponential time increases in processing time that would occur if the entire run was converted to .list at once.
 /*==============================================================*/
 list_HPGe_CC_Seg_time_difference
 list_HPGe_CC_Seg_time_difference list_input_data map window_[ns]
@@ -320,12 +325,12 @@ No clue.
 list_read
 list_read list_input_data [number]
 
-No clue.
+Outputs the contents of a .list file to the terminal. Append "> filename.extension" to output to a file instead of the terminal.
 /*==============================================================*/
 list_reset
 list_reset fragment_list
 
-No clue.
+Resets all of the triggers applied to a list. This is useful for cleaning a subrun before using list_combine.
 /*==============================================================*/
 list_test_doubletrigger
 list_test_doubletrigger list_input_data map window_[ns] ch1 ch2

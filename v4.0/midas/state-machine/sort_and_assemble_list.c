@@ -444,16 +444,17 @@ int analyze_fragment_for_assembly(Grif_event* ptr, short* waveform,data_pointers
 
   if(max_TSUP>=0)
     if(nd.ch.timestamp_up>=max_TSUP)
+      printf("Dropping fragment due to tsup being too high.\n");
       return 0;
 
   if(prev_TSUP>=0)
     {
       if((prev_TSUP-nd.ch.timestamp_up)>1)
 	{
-	  printf("Dropping fragment due to pulse height of zero.\n");
-	  printf("Energy: %d\n", ptr->energy);
-	  printf("TSUP: %d\n", nd.ch.timestamp_up);
-	  printf("Prev: %d\n", prev_TSUP);
+	  printf("Dropping fragment due to tsup error.\n");
+	  //printf("Energy: %d\n", ptr->energy);
+	  //printf("TSUP: %d\n", nd.ch.timestamp_up);
+	  //printf("Prev: %d\n", prev_TSUP);
 	  return 0;
 	}
       

@@ -5,16 +5,16 @@ int analyze_fragment(Grif_event* ptr, short* waveform)
 
   if(((int)((ptr->timestamp>>32)&0xffff))==0)
     {
-      if(((ptr->energy)>=0) && ((ptr->energy)<=S32K))
+      if(((ptr->energy)>=0) && (((ptr->energy)/10)<=S32K))
 	{
-	  hist_tsup0[(int)(ptr->energy)]++;
+	  hist_tsup0[(int)((ptr->energy)/10)]++;
 	}
     }
   else
     {
-      if(((ptr->energy)>=0) && ((ptr->energy)<=S32K) && (ptr->chan<1024))
+      if(((ptr->energy)>=0) && (((ptr->energy)/10)<=S32K))
 	{
-	  hist_not_tsup0[(int)(ptr->energy)]++;
+	  hist_not_tsup0[(int)((ptr->energy)/10)]++;
 	}
     }
   
