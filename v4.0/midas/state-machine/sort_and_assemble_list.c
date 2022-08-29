@@ -442,25 +442,52 @@ int analyze_fragment_for_assembly(Grif_event* ptr, short* waveform,data_pointers
   //this chunk of code relies on set up that occurs in midas2list
   //initialization should have prev_TSUP = 0 and max_TSUP < 0
 
-  if(max_TSUP>=0)
-    if(nd.ch.timestamp_up>=max_TSUP)
-      printf("Dropping fragment due to tsup being too high.\n");
-      return 0;
+  total_FRAGMENTS++;
+  
+  if(buffer_TSUP>=0)
+    {
+      if(nd.ch.timestamp_up>=buffer_TSUP)
+	{
+	  printf("Dropping fragment from previous run as %d >= %d.\n", nd.ch.timestamp_up, buffer_TSUP);
+	  buffer_DROPPED++;
+	  return 0;
+	}
+
+      buffer_TSUP=-1;
+      printf("The dropped buffer should be %d fragments long.\n", buffer_DROPPED);
+      prev_TSUP=nd.ch.timestamp_up;
+      printf("The first prev_TSUP value has been set to %d\n", prev_TSUP);
+    }
+  
+  if((min_TSUP>=0)&&(max_TSUP>=0))
+    if((nd.ch.timestamp_up<min_TSUP)||(nd.ch.timestamp_up>max_TSUP))
+      {
+	printf("Dropping fragment due to an incorrect tsup value.\n");
+	printf("TSUP: %d is not in range: [%d, %d]\n", nd.ch.timestamp_up, min_TSUP, max_TSUP);
+	minmax_DROPPED++;
+	return 0;
+      }
 
   if(prev_TSUP>=0)
     {
-      if((prev_TSUP-nd.ch.timestamp_up)>1)
+      if(abs(nd.ch.timestamp_up-prev_TSUP)>1)
 	{
-	  printf("Dropping fragment due to tsup error.\n");
-	  //printf("Energy: %d\n", ptr->energy);
-	  //printf("TSUP: %d\n", nd.ch.timestamp_up);
-	  //printf("Prev: %d\n", prev_TSUP);
+ 	  printf("Dropping fragment due to an incorrect tsup value.\n");
+	  printf("Current TSUP %d and previous TSUP %d differ by a magnitude larger than 1\n", nd.ch.timestamp_up, prev_TSUP);
+	  //printf("Value tested: %d\n", abs(prev_TSUP-nd.ch.timestamp_up));
+	  prev_DROPPED++;
 	  return 0;
 	}
+
+      if(min_TSUP==0)
+	if(prev_TSUP==1)
+	  if(nd.ch.timestamp_up==1)
+	    min_TSUP++;
+
+      prev_TSUP=nd.ch.timestamp_up; 
+    }  
       
-      prev_TSUP=nd.ch.timestamp_up;
-    }
-    
+  
   
   //for TIP channels do the fits
   if(nd.chan>=map->csiarray_min)

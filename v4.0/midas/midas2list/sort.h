@@ -8,6 +8,6 @@
 
 FILE* out;
 
-int prev_TSUP, max_TSUP;
+int prev_TSUP, min_TSUP, max_TSUP, buffer_TSUP, buffer_DROPPED, minmax_DROPPED, prev_DROPPED, total_FRAGMENTS;
 int analyze_fragment(Grif_event*, short*){return -1;};
 #endif

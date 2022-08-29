@@ -27,6 +27,10 @@ all:
 	(cd tsup0_energy r && make -is clean && make && make -is clean && cd ..)
 	echo DONE: PROJECT_TSUP0_ENERGY.
 
+	echo Making project_channelHP_tsupRange.
+	(cd channelHP r && make -is clean && make  && make -is clean && cd ..)
+	echo DONE: PROJECT_CHANNELHP_TSUPRANGE.
+
 clean:
 	(cd channel    && make -is clean && cd ..)
 	(cd channelHP  && make -is clean && cd ..)
@@ -35,4 +39,5 @@ clean:
 	(cd TIP_HP && make -is clean && cd ..)
 	(cd TIP_energy && make -is clean && cd ..)
 	(cd tsup0_energy && make -is clean && cd ..)
+	(cd channelHP_tsupRange  && make -is clean && cd ..)
 	rm -f *~

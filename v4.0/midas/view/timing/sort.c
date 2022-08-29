@@ -20,21 +20,28 @@ int analyze_fragment(Grif_event* ptr, short* waveform)
   printf("      Time Stamp [ns]     :   %16ld 0x%16.16lx\n",ts,ts);
   printf("      Time Stamp [samples]:   %16ld 0x%16.16lx\n",ts/10,ts/10);
  
- 
-  //getc(stdin);
+  if(tsup==stop_TSUP)
+    getc(stdin);
+  
   return 0;
 }
 /*================================================================*/
 int main(int argc, char *argv[])
 {
 
-  if(argc!=2)
+  stop_TSUP=-1;
+  
+  if((argc!=2)&&(argc!=3))
     {
       printf("midas_view_timing midas_input_data\n");
+      printf("OR\n");
+      printf("midas_view_timing midas_input_data stop_at_tsup\n");
       exit(-1);
     }
+
+  if(argc==3)
+    stop_TSUP=atoi(argv[2]);
   
- 
   /* do sorting */
   sort_but_not_assemble(argv[1]);
   printf("Program provides information on consecutive fragments.\n");

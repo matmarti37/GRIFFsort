@@ -5,5 +5,7 @@
 #include "sort_but_not_assemble.h"
 
 int h[S32K];
+int h2[S32K];
+int counter;
 
 #endif

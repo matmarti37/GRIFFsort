@@ -13,16 +13,16 @@ all:
 	echo DONE: VIEW.
 	echo Making wfit.
 	(cd wfit && make -is clean && make && make -is clean && cd ..)
-	echo DONE: wfit.
+	echo DONE: WFIT.
 	echo Making project.
 	(cd project && make -is clean && make && make -is clean && cd ..)
-	echo DONE: project.	
+	echo DONE: PROJECT.	
 	echo Making TIP_cal.
 	(cd TIP_cal && make -is clean && make && make -is clean && cd ..)
-	echo DONE: TIP_cal.
+	echo DONE: TIP_CAL.
 	echo Making midas2list.
 	(cd midas2list && make -is clean && make && make -is clean && cd ..)
-	echo DONE: midas2list.
+	echo DONE: MIDAS2LIST.
 
 clean:
 	(cd decoder       && make -is clean && cd ..)
