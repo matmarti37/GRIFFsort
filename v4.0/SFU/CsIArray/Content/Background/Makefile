@@ -16,7 +16,7 @@ SORT= sort.o\
 
 
 sort:$(SORT)
-	$(CC) -o $(BIN)/sfu_CsIArray_Particle_Content $(SORT) $(CFLAGS) $(ROOT) -lm -ldl
+	$(CC) -o $(BIN)/sfu_CsIArray_ContentBackground $(SORT) $(CFLAGS) $(ROOT) -lm -ldl
 
 sort.o:sort.c sort.h
 	$(CC) -c -o sort.o sort.c $(CFLAGS) $(INC)
