@@ -4,6 +4,7 @@
 #include "SFU-common.h"
 #include "sort_but_not_assemble.h"
 
-int h[1024];
+#define max_tsup S1K
+int h[max_tsup];
 
 #endif

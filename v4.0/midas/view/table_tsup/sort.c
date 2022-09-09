@@ -16,6 +16,8 @@ int main(int argc, char *argv[])
   char in_filename[132];
   char out_filename[132];
   FILE* output;
+  int low=0,high=max_tsup;
+  int check=0;
 
   if(argc!=3)
     {
@@ -36,12 +38,23 @@ int main(int argc, char *argv[])
       printf("ERROR!!! I cannot open the output file.\n");
       exit(EXIT_FAILURE);
     }
-  fprintf(output,"%s\t",in_filename);
-  /* for(int i=0;i<1024;i++) */
-  /*   fprintf(output,"%d-%d\t",i,h[i]); */
-  /* fprintf(output,"\n"); */
-  /* fprintf(output,"\n"); */
-  for(int i=0;i<1024;i++)
+
+  for(int i=0;i<max_tsup;i++)
+    {
+      if(h[i]!=0 && check==1) {low=i-1; break;}
+      if(h[i]!=0 && check==0) {check=1;}
+      if(h[i]==0) {check=0;}
+    }
+  check=0;
+  for(int i=max_tsup;i>0;i--)
+    {
+      if(h[i]!=0 && check==1) {high=i+1; break;}
+      if(h[i]!=0 && check==0) {check=1;}
+      if(h[i]==0) {check=0;}
+    }
+  
+  fprintf(output,"%s;%d;%d;",in_filename,low,high);
+  for(int i=0;i<max_tsup;i++)
     if(h[i]!=0)
       fprintf(output,"%d-%d\t",i,h[i]);
   fprintf(output,"\n");

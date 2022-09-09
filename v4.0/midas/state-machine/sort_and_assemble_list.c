@@ -444,20 +444,20 @@ int analyze_fragment_for_assembly(Grif_event* ptr, short* waveform,data_pointers
 
   total_FRAGMENTS++;
   
-  if(buffer_TSUP>=0)
-    {
-      if(nd.ch.timestamp_up>=buffer_TSUP)
-	{
-	  printf("Dropping fragment from previous run as %d >= %d.\n", nd.ch.timestamp_up, buffer_TSUP);
-	  buffer_DROPPED++;
-	  return 0;
-	}
+  /* if(buffer_TSUP>=0) */
+  /*   { */
+  /*     if(nd.ch.timestamp_up>=buffer_TSUP) */
+  /* 	{ */
+  /* 	  printf("Dropping fragment from previous run as %d >= %d.\n", nd.ch.timestamp_up, buffer_TSUP); */
+  /* 	  buffer_DROPPED++; */
+  /* 	  return 0; */
+  /* 	} */
 
-      buffer_TSUP=-1;
-      printf("The dropped buffer should be %d fragments long.\n", buffer_DROPPED);
-      prev_TSUP=nd.ch.timestamp_up;
-      printf("The first prev_TSUP value has been set to %d\n", prev_TSUP);
-    }
+  /*     buffer_TSUP=-1; */
+  /*     printf("The dropped buffer should be %d fragments long.\n", buffer_DROPPED); */
+  /*     prev_TSUP=nd.ch.timestamp_up; */
+  /*     printf("The first prev_TSUP value has been set to %d\n", prev_TSUP); */
+  /*   } */
   
   if((min_TSUP>=0)&&(max_TSUP>=0))
     if((nd.ch.timestamp_up<min_TSUP)||(nd.ch.timestamp_up>max_TSUP))
@@ -468,24 +468,24 @@ int analyze_fragment_for_assembly(Grif_event* ptr, short* waveform,data_pointers
 	return 0;
       }
 
-  if(prev_TSUP>=0)
-    {
-      if(abs(nd.ch.timestamp_up-prev_TSUP)>1)
-	{
- 	  printf("Dropping fragment due to an incorrect tsup value.\n");
-	  printf("Current TSUP %d and previous TSUP %d differ by a magnitude larger than 1\n", nd.ch.timestamp_up, prev_TSUP);
-	  //printf("Value tested: %d\n", abs(prev_TSUP-nd.ch.timestamp_up));
-	  prev_DROPPED++;
-	  return 0;
-	}
+  /* if(prev_TSUP>=0) */
+  /*   { */
+  /*     if(abs(nd.ch.timestamp_up-prev_TSUP)>1) */
+  /* 	{ */
+  /* 	  printf("Dropping fragment due to an incorrect tsup value.\n"); */
+  /* 	  printf("Current TSUP %d and previous TSUP %d differ by a magnitude larger than 1\n", nd.ch.timestamp_up, prev_TSUP); */
+  /* 	  //printf("Value tested: %d\n", abs(prev_TSUP-nd.ch.timestamp_up)); */
+  /* 	  prev_DROPPED++; */
+  /* 	  return 0; */
+  /* 	} */
 
-      if(min_TSUP==0)
-	if(prev_TSUP==1)
-	  if(nd.ch.timestamp_up==1)
-	    min_TSUP++;
+  /*     if(min_TSUP==0) */
+  /* 	if(prev_TSUP==1) */
+  /* 	  if(nd.ch.timestamp_up==1) */
+  /* 	    min_TSUP++; */
 
-      prev_TSUP=nd.ch.timestamp_up; 
-    }  
+  /*     prev_TSUP=nd.ch.timestamp_up;  */
+  /*   }   */
       
   
   
