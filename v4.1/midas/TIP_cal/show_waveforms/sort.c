@@ -1,0 +1,84 @@
+#include "sort.h"
+
+#include "functions.c"
+/*================================================================*/
+int analyze_fragment(Grif_event* ptr,short* waveform)
+{
+ Int_t d;
+ WaveFormPar wpar;
+ double red_chisq, amplitude, energy, ratio;
+ int detector;
+ 
+ detector=det_map[ptr->chan];
+  
+ if(detector>=det_low && detector<=det_high)
+ {
+  if((d=ptr->waveform_length)!=0)
+  {
+   fit_CsI_waveform(d,waveform,par,&wpar);
+   red_chisq=par->chisq/par->ndf;
+   if(red_chisq<=chisq_cutoff && par->type==1)
+   {
+    amplitude=par->am[2]+par->am[3]; // Amplitude = Fast + Slow
+    energy=(TIP_cal_params[detector][0]+TIP_cal_params[detector][1]*amplitude); // Calibrated
+    ratio=100*(par->am[3]/par->am[2])+100; // ratio = (100 * As/Af) +100
+    
+    if(ratio>=120 && ratio<=130)
+    {
+     if(energy>=14.8 && energy<=15.2)
+     {
+      printf("ALPHA PARTICLE WAVEFORM");
+      print_fragment_info(ptr);
+      show_CsI_Fit(d,waveform,par,&wpar,theApp);
+     }
+    }
+    if(ratio>=185 && ratio<=195)
+    {
+     if(energy>=14.8 && energy<=15.2)
+     {
+      printf("PROTON WAVEFORM");
+      print_fragment_info(ptr);
+      show_CsI_Fit(d,waveform,par,&wpar,theApp);
+     }
+    }
+   }
+  }
+ }
+ return 0;
+}
+ 
+/*================================================================*/
+int main(int argc, char *argv[])
+{
+ // Checks command line arguments
+ if(argc!=2) {printf("midas_TIP_cal_PID parameter_file\n"); exit(-1);}
+ 
+ // Initializes parameters for waveform fitting
+ par=(ShapePar*)malloc(sizeof(ShapePar)); memset(par,0,sizeof(ShapePar));
+ 
+ // Reads parameter file
+ char* param_filename=argv[1];
+ read_parameter_file(param_filename);
+ 
+ // Reads detector map file
+ read_map_file(map_filename);
+ 
+ // Reads calibration file
+ TIP_calibration(cal_filename);
+ 
+ // Reads ring map and determines det_low and det_high
+ read_ring_map(ring_filename);
+ 
+ // Creates histograms
+ //create_histograms();
+ 
+ theApp=new TApplication("App", &argc, argv);
+ 
+ // Read data files and perform sort
+ sort_data(data_filename);
+ 
+ // Save root files with histograms
+ //create_root_files(output_filename);
+ 
+ return 0;
+}
