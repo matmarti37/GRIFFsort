@@ -107,8 +107,14 @@ int main(int argc, char *argv[])
     h->GetYaxis()->SetTitle("PIN Array Fold");
   else
     h->GetYaxis()->SetTitle("y Fold");
+  
   h->GetYaxis()->CenterTitle(true);
   h->SetOption("COLZ");
+
+  char output_filename[128];
+  strcpy(output_filename,"Fold2D.root");
+  TFile f(output_filename,"recreate");
+  h->Write();
 
   h->Draw();
   theApp->Run(kTRUE);
