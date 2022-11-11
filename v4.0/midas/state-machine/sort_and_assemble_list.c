@@ -443,6 +443,12 @@ int analyze_fragment_for_assembly(Grif_event* ptr, short* waveform,data_pointers
   //initialization should have prev_TSUP = 0 and max_TSUP < 0
 
   total_FRAGMENTS++;
+
+  if(ptr->pileup!=1)
+    {
+      pileup_DROPPED++;
+      return 0;
+    }
   
   /* if(buffer_TSUP>=0) */
   /*   { */

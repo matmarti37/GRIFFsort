@@ -15,7 +15,7 @@ TH1D *h;
 TCanvas *c;  
 TApplication *theApp;
 
-long long tsstore;
+long long tsstore,Estore,Egate_low,Egate_high;
 int hist[S4K];
 
 #endif

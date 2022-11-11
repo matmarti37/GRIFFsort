@@ -12,9 +12,10 @@ UTILS=read_master.o\
       get_sin_par.o\
       waveform_analyzer.o
 
-utils:$(UTILS) addspn
+utils:$(UTILS) addspn chisqspn
 	$ ar rcs $(BIN)/utils.a $(UTILS)
 	mv addspn $(GRIFFsort)/bin
+	mv chisqspn $(GRIFFsort)/bin	
 
 read_master.o:read_master.c read_master.h
 	$(CC) -c -o read_master.o $(CFLAGS) read_master.c -I$(INC)
@@ -30,8 +31,10 @@ waveform_analyzer.o:waveform_analyzer.c waveform_analyzer.h
 
 addspn:
 	$(CC) -o addspn $(CFLAGS) addspn.c -I$(INC)
+chisqspn:
+	$(CC) -o chisqspn $(CFLAGS) chisqspn.c -I$(INC)
 clean:
 	rm -rf *.o
 
 very-clean:
-	rm -rf *.a *.o *.*~ *~ sort addspn
+	rm -rf *.a *.o *.*~ *~ sort addspn chisqspn

@@ -1,0 +1,1 @@
+printf("Ts[ns] %16lld Ch %4d Ts_up %8u Ts %8u CFD %8u TigTrig %8d CsITrig %8d TrigTs[ns] %16lld Trig %8d\n",current.tsns,current.chan,(unsigned int)current.ch.timestamp_up,(unsigned int)current.ch.timestamp,(unsigned int)current.ch.cfd,current.tig_trig,current.csi_trig,current.trig_tsns,current.trig);

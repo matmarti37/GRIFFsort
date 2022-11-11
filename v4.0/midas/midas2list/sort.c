@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
   buffer_DROPPED = 0;
   minmax_DROPPED = 0;
   prev_DROPPED = 0;
+  pileup_DROPPED = 0;
   
   if(argc!=6&&argc!=7)
     {
@@ -54,9 +55,10 @@ int main(int argc, char *argv[])
   printf("Sorting time %8.2f seconds\n",time);
 
   printf("Total fragments counted: %d\n", total_FRAGMENTS);
-  printf("Total fragments dropped by buffer_TSUP: %d\n", buffer_DROPPED);
+  //printf("Total fragments dropped by buffer_TSUP: %d\n", buffer_DROPPED);
   printf("Total fragments dropped by minmax_TSUP: %d\n", minmax_DROPPED);
-  printf("Total fragments dropped by prev_TSUP: %d\n", prev_DROPPED);
-  printf("Total fragments dropped: %d\n", (buffer_DROPPED+minmax_DROPPED+prev_DROPPED));
+  //printf("Total fragments dropped by prev_TSUP: %d\n", prev_DROPPED);
+  printf("Total fragments dropped by pileup != 1: %d\n", pileup_DROPPED);
+  printf("Total fragments dropped: %d\n", (buffer_DROPPED+minmax_DROPPED+prev_DROPPED+pileup_DROPPED));
   printf("Percentage dropped: %f%%\n", (100*((float)(buffer_DROPPED+minmax_DROPPED+prev_DROPPED))/((float)(total_FRAGMENTS))));
 }

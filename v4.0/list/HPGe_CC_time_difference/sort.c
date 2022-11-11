@@ -12,6 +12,7 @@ int analyze_list(int limit,int offset,node* curr,gmap* map)
 	      if(offset==0)
 		{
 		  tsstore=curr->tsns;
+		  Estore=curr->ch.charge;
 		  return 0;
 		}
 	      
@@ -29,9 +30,14 @@ int analyze_list(int limit,int offset,node* curr,gmap* map)
 	      
 	      if(diff>0)
 		if(diff<S4K)
-		  hist[(int)diff]++;
+		  if(curr->ch.charge>=Egate_low)
+		    if(Estore>=Egate_low)
+		      if(curr->ch.charge<=Egate_high)
+			if(Estore<=Egate_high)
+			  hist[(int)diff]++;
 	      
 	      tsstore=curr->tsns;
+	      Estore=curr->ch.charge;
 	    }
   return 0;
 }
@@ -51,9 +57,9 @@ int main(int argc, char *argv[])
   av[0]=0;
   son=sizeof(node);
   
-  if(argc!=3)
+  if(argc!=5)
     {
-      printf("list_HPGe_CC_time_difference list_input_data map\n");
+      printf("list_HPGe_CC_time_difference list_input_data map E_gate_low E_gate_high\n");
       exit(-1);
     }
   
@@ -66,6 +72,8 @@ int main(int argc, char *argv[])
       exit(-2);
     }
 
+  Egate_low=atoi(argv[3]);
+  Egate_high=atoi(argv[4]);
   read_map(argv[2],&map);
   memset(&hist,0,sizeof(hist));
   theApp=new TApplication("App", &ac, av);
