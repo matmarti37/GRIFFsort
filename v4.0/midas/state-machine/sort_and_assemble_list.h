@@ -43,7 +43,7 @@ typedef struct node
   double       t0;
 }node;
 
-extern int prev_TSUP, min_TSUP, max_TSUP, buffer_TSUP, buffer_DROPPED, minmax_DROPPED, prev_DROPPED, pileup_DROPPED, total_FRAGMENTS;
+extern int prev_TSUP, min_TSUP, max_TSUP, buffer_TSUP, buffer_DROPPED, minmax_DROPPED, prev_DROPPED, total_FRAGMENTS;
 extern int analyze_list(int,int,node*);
 int print_list(int, int, node*);
 int store_list(int, node*, FILE*);
