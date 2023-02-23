@@ -7,16 +7,28 @@ int analyze_data(raw_event *data)
   int pos;
   double e,r;
   int content=0;
-  //int ring;
-
+  int ring;
   
-
-  if((data->h.setupHP&CsIArray_BIT)==0)
-    return SEPARATOR_DISCARD;
-
   cev=(cal_event*)malloc(sizeof(cal_event));
   memset(cev,0,sizeof(cal_event));
   calibrate_CSIARRAY(data,&cal_par->csiarray,&cev->csiarray);
+
+  if(keep==0)
+    {
+      if(cev->csiarray.h.FE==0)
+	{
+	  free(cev);
+	  return SEPARATOR_KEEP;
+	}
+      free(cev);
+      return SEPARATOR_DISCARD;
+    }
+  
+  if((data->h.setupHP&CsIArray_BIT)==0)
+    {
+      free(cev);
+      return SEPARATOR_DISCARD;
+    }
 
   if(cev->csiarray.h.FE>0)
     for(pos=1;pos<NCSI;pos++)
@@ -26,11 +38,16 @@ int analyze_data(raw_event *data)
 	    continue;
 	  e=cev->csiarray.csi[pos].E/cal_par->csiarray.contr_e;
 	  r=100*(data->csiarray.wfit[pos].am[3]/data->csiarray.wfit[pos].am[2])+100;
-	  //ring=cev->csiarray.ring[pos];
+	  ring=cev->csiarray.ring[pos];
+	  /* printf("%d\n",ring); */
 	  if(e>=0 && e<S32K)
 	    {
+	      /* if(pGate[ring]->IsInside(e,r)) */
+	      /*   content++; */
+	      /* if(aGate[ring]->IsInside(e,r)) */
+	      /* 	content+=10; */
 	      if(pGate->IsInside(e,r))
-	        content++;
+		content++;
 	      if(aGate->IsInside(e,r))
 		content+=10;
 	    }
@@ -72,6 +89,28 @@ int main(int argc, char *argv[])
       pGate=(TCutG *) gROOT->FindObject("cut_0");
       aGate=(TCutG *) gROOT->FindObject("cut_1");
     }
+
+  /* char agatename[128]; */
+  /* char pgatename[128]; */
+  /* for(int i=0;i<10;i++) */
+  /*   { */
+  /*     aGate[i] = new TCutG; */
+  /*     pGate[i] = new TCutG; */
+  /*   } */
+  /* TFile* g; */
+  /* if(name->flag.root_gate_file==1) */
+  /*   { */
+  /*     g=new TFile(name->fname.root_gate_file,"READ"); */
+  /*     for(int i=0;i<10;i++) */
+  /* 	{ */
+  /* 	  sprintf(agatename,"alpha_ring%d",i); */
+  /* 	  printf("%s\n",agatename); */
+  /* 	  sprintf(pgatename,"proton_ring%d",i); */
+  /* 	  printf("%s\n",pgatename); */
+  /* 	  aGate[i]=(TCutG *) gROOT->FindObject(agatename); */
+  /* 	  pGate[i]=(TCutG *) gROOT->FindObject(pgatename); */
+  /* 	} */
+  /*   } */
 
   if(name->flag.inp_data!=1)
     {

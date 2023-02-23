@@ -4,7 +4,6 @@ int analyze_list(int limit,int offset,node* list)
 {
 
   print_list(limit,offset,list);
-  
   return 0;
 }
 /*================================================================*/
@@ -36,8 +35,15 @@ int main(int argc, char *argv[])
   i=0;
   int tip_count=0;
   while(fread(&nd,son,1,inp)==1)
-    {     
+    {
+      if(i<94858)
+	{
+	  i++;
+	  continue;
+	}
       analyze_list(1,i,&nd);
+      if(i==94867)
+	exit(-1);
       if(nd.chan>1000 && nd.trig>0) tip_count++;
       i++;
       /* if(i==58600) */

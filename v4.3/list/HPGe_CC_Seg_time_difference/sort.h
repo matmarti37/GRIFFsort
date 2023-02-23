@@ -16,11 +16,9 @@ TH1D *h;
 TCanvas *c;  
 TApplication *theApp;
 
-//int hist[S32K];
 int hist[NPOSTIGR][S32K];
-//int hist[32][S32K];
-//int hist[128][S32K];
 unsigned long long window;
+int Egate_low,Egate_high,E_divisor;
 
 int analyze_list(int,int,node*){return -1;};
 int analyze_fragment(Grif_event*, short*){return -1;};

@@ -12,5 +12,6 @@
 cal_event* cev;
 /* int  hist[NPOSTIGR][NCOL][S32K]; */
 calibration_parameters* cal_par;
-TH2D *h;
+TH2D *h, *hraw;
+int E_divider;
 #endif

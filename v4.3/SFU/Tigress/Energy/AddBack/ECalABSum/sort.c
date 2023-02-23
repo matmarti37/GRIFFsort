@@ -27,11 +27,14 @@ int analyze_data(raw_event *data)
 	    col = cev->tg.det[pos].addbackC;
 	    if(eAddBack>=0 && eAddBack<S32K) hist[pos][col][(int)(eAddBack)]++;
 	    else hist[pos][col][S32K-1000]++;
+
+	    //printf("Addback fold: %d\n",cev->tg.det[pos].addbackF);
 	    /*
 	      if(cev->tg.det[pos].hge.FE > 2) printf("The add back energy is ---> %f.\n",eAddBack);
 	    */
 	  }
 
+  
   free(cev);
   return SEPARATOR_DISCARD;
 }
@@ -83,7 +86,6 @@ int main(int argc, char *argv[])
       printf("ERROR!!! TIGRESS calibration parameters not defined\n");
       exit(EXIT_FAILURE);
     }
-  
   while(fscanf(cluster,"%s",DataFile) != EOF)
     {
       memset(name,0,sizeof(input_names_type));
@@ -104,4 +106,7 @@ int main(int argc, char *argv[])
       
       for(col=0;col<NCOL;col++) fwrite(hist[pos][col],S32K*sizeof(int),1,output);
       fclose(output);
-    }}
+    }
+
+  
+}

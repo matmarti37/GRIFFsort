@@ -8,6 +8,21 @@ int analyze_data(raw_event *data)
   cev=(cal_event*)malloc(sizeof(cal_event));
   memset(cev,0,sizeof(cal_event));
   calibrate_TIGRESS(data,&cal_par->tg,&cev->tg);
+
+  if(data->tg.h.Gefold>0)
+    for(pos=1;pos<NPOSTIGR;pos++)
+      if(data->tg.det[pos].h.Gefold>0)
+	for(col=0;col<NCOL;col++)
+	  if((data->tg.det[pos].h.GeHP&(1<<col))!=0)
+	    if(data->tg.det[pos].ge[col].h.Efold>0)
+	      if((data->tg.det[pos].ge[col].h.EHP&1)!=0)
+		{
+		  e=data->tg.det[pos].ge[col].seg[0].charge;
+		  e/=E_divider;
+		  if(e>=0)
+		    if(e<=S32K)
+		      hraw->Fill(e,4*(pos-1)+col);
+		}
   
   if(cev->tg.h.FE>0)
     for(pos=1;pos<NPOSTIGR;pos++)
@@ -28,28 +43,29 @@ int analyze_data(raw_event *data)
 /*=========================================================================*/
 int main(int argc, char *argv[])
 {
-  FILE *output, *cluster;
+  FILE *cluster;
   input_names_type* name;
-  int stop,pos,col;
   char DataFile[132];
   
-  if(argc!=2)
+  if(argc!=3)
     {
-      printf("TIGRESS_ECalSum master_file_name\n");
+      printf("TIGRESS_ECalSum master_file_name E_divider\n");
       exit(-1);
     }
   
-  printf("Program sorts summed ECal histograms for TIGRESS crystal cores from a cluster file\n");
+  printf("Program sorts summed ECal and ERaw histograms by TIGRESS crystal cores from a cluster file\n");
 
   name=(input_names_type*)malloc(sizeof(input_names_type));
   memset(name,0,sizeof(input_names_type));
   cal_par=(calibration_parameters*)malloc(sizeof(calibration_parameters));
   memset(cal_par,0,sizeof(calibration_parameters));
-  /* memset(hist,0,sizeof(hist)); */
   read_master(argv[1],name);
+  E_divider=atoi(argv[2]);
 
   h = new TH2D("ECalnoABSupp_by_Crystal","ECalnoABSupp_by_Crystal",S32K,0,S32K,64,0,64);
   h->Reset();
+  hraw = new TH2D("ERaw_by_Crystal","ERaw_by_Crystal",S32K,0,S32K,64,0,64);
+  hraw->Reset();
   
   if(name->flag.cluster_file==1)
     {
@@ -85,9 +101,15 @@ int main(int argc, char *argv[])
     }
 
   TFile f("ch_v_det.root","recreate");
-  h->GetXaxis()->SetTitle("Channel");
+  h->GetXaxis()->SetTitle("Energy [keV]");
   h->GetYaxis()->SetTitle("Detector");
+  h->SetTitle("ECal");
   h->SetOption("COLZ");
   h->Write();
+  hraw->GetXaxis()->SetTitle("Channel");
+  hraw->GetYaxis()->SetTitle("Detector");
+  hraw->SetTitle("ERaw");
+  hraw->SetOption("COLZ");
+  hraw->Write();
   f.Close();
 }

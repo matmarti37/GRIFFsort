@@ -95,10 +95,6 @@ all:
 	(cd  reset && make -is clean && make && make -is clean && cd ..)
 	echo DONE: reset.
 
-	echo Making test_doubletrigger.
-	(cd  test_doubletrigger && make -is clean && make && make -is clean && cd ..)
-	echo DONE: test_doubletrigger.
-
 	echo Making channelHP_tsup
 	(cd channelHP_tsup && make -is clean && make && make -is clean && cd ..)
 	echo DONE: channelHP_tsup
@@ -132,7 +128,6 @@ clean:
 	(cd add_trigger_to_Seg          && make -is clean && cd ..)
 	(cd add_trigger_to_Sup          && make -is clean && cd ..)
 	(cd reset                       && make -is clean && cd ..)
-	(cd test_doubletrigger          && make -is clean && cd ..)
 	(cd channelHP_tsup		&& make -is clean && cd ..)
 	(cd copy_trigger                && make -is clean && cd ..)
 	rm -f *~

@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
   memset(mat,0,sizeof(mat));
   read_master(argv[1],name);
 
-  h = new TH2D("Tigress EECalABSupp Sum","Tigress EECalABSuppSum",S4K,0,S4K-1,S4K,0,S4K-1);
+  h = new TH2D("Tigress_EECalABSuppSum","Tigress_EECalABSuppSum",S4K,0,S4K-1,S4K,0,S4K-1);
   h->Reset();
 
   if(name->flag.cluster_file==1)

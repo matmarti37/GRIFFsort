@@ -10,7 +10,12 @@ int analyze_data(raw_event *data)
   int ring;
 
   if((data->h.setupHP&CsIArray_BIT)==0)
-    return SEPARATOR_DISCARD;
+    {
+      h->Fill(content);
+      hist[content]++;
+      return SEPARATOR_DISCARD;
+    }
+    /* return SEPARATOR_DISCARD; */
 
   cev=(cal_event*)malloc(sizeof(cal_event));
   memset(cev,0,sizeof(cal_event));
@@ -34,16 +39,18 @@ int analyze_data(raw_event *data)
 	    }
 	}
   h->Fill(content);
+  hist[content]++;
   free(cev);
   return SEPARATOR_DISCARD;
 }
 /*====================================================================================*/
 int main(int argc, char *argv[])
 {
-  FILE * output;
+  FILE *output, *cluster;
   input_names_type* name;
   TCanvas *canvas;
   TApplication *theApp;
+  char DataFile[132];
 
   if(argc!=2)
     {
@@ -59,6 +66,7 @@ int main(int argc, char *argv[])
   memset(name,0,sizeof(input_names_type));
   cal_par=(calibration_parameters*)malloc(sizeof(calibration_parameters));
   memset(cal_par,0,sizeof(calibration_parameters));
+  memset(hist,0,sizeof(hist));
   
   read_master(argv[1],name);
 
@@ -70,12 +78,25 @@ int main(int argc, char *argv[])
       aGate=(TCutG *) gROOT->FindObject("cut_1");
     }
 
-  if(name->flag.inp_data!=1)
-    {
-      printf("ERROR!!! Input data file not defined!\n");
-      exit(EXIT_FAILURE);
-    }
+  /* if(name->flag.inp_data!=1) */
+  /*   { */
+  /*     printf("ERROR!!! Input data file not defined!\n"); */
+  /*     exit(EXIT_FAILURE); */
+  /*   } */
 
+  if(name->flag.cluster_file==1)
+    {
+      //printf("Sorting calibrated energy histograms for TIGRESS clovers and cores based upon the cluster file: %s\n",name->fname.cluster_file);
+      if((cluster=fopen(name->fname.cluster_file,"r"))==NULL)
+	{
+	  printf("ERROR! I can't open input file %s\n",name->fname.cluster_file);
+	  exit(-2);
+	}}
+  else
+    {
+      printf("ERROR! Cluster file not defined\n");
+      exit(-1);
+    }
   if(name->flag.CSIARRAY_cal_par==1)
     {
       printf("CsIArray calpar read from: %s\n",name->fname.CSIARRAY_cal_par);
@@ -86,8 +107,24 @@ int main(int argc, char *argv[])
       printf("ERROR! CsIArray calibration parameters not defined!\n");
       exit(EXIT_FAILURE);
     }
+  while(fscanf(cluster,"%s",DataFile) != EOF)
+    {
+      memset(name,0,sizeof(input_names_type));
+      strcpy(name->fname.inp_data,DataFile);
+      
+      printf("Sorting gamma-ray energy data from file %s\n", name);
+      sort(name);
+    }
   
-  sort(name);
+  /* sort(name); */
+
+  if((output=fopen("particle_content.spn","w"))==NULL)
+    {
+      printf("ERROR. Cannot open .spn file\n");
+      exit(EXIT_FAILURE);
+    }
+  fwrite(hist,sizeof(hist),1,output);
+  fclose(output);
   
   theApp=new TApplication("App", &argc, argv);
   canvas = new TCanvas("Particle_Content","Particle_Content",10,10,500,300);
@@ -114,7 +151,10 @@ int main(int argc, char *argv[])
   h->SetStats(0);
   h->Write();
  }
-  
+
+ 
   
   theApp->Run(kTRUE);
+
+  
 }

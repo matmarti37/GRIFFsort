@@ -34,7 +34,6 @@ int analyze_data(raw_event *data)
 	  else
 	    {
 	      hist[pos][S32K-1000]++;
-	      h->Fill(S32K-1000,pos);
 	    }
 	}
   free(cev);
@@ -54,7 +53,7 @@ int main(int argc, char *argv[])
       exit(-1);
     }
   
-  h = new TH2D("ECal","ECal",S4K,0,S4K-1,NCSI+1,0,NCSI);
+  h = new TH2D("ECal","ECal",S32K,0,S32K-1,NCSI+1,0,NCSI);
   h->Reset();
 
   printf("Program sorts ECal histograms for the CsIArray.\n");
@@ -83,16 +82,25 @@ int main(int argc, char *argv[])
     }
   
   sort(name);
+
+  TFile f("CsI_ECal.root","recreate");
+  h->GetXaxis()->SetTitle("Energy [keV]");
+  h->GetXaxis()->CenterTitle(true);
+  h->GetYaxis()->SetTitle("Position");
+  h->GetYaxis()->CenterTitle(true);
+  h->SetOption("COLZ");
+  h->Write();
+  f.Close();
   
-  if((output=fopen("CsIArray_ECal.mca","w"))==NULL)
-    {
-      printf("ERROR!!! I cannot open the mca file!");
-      exit(EXIT_FAILURE);
-    }
-  for(int pos=0;pos<NCSI;pos++)
-    fwrite(hist[pos],S32K*sizeof(int),1,output);
+  /* if((output=fopen("CsIArray_ECal.mca","w"))==NULL) */
+  /*   { */
+  /*     printf("ERROR!!! I cannot open the mca file!"); */
+  /*     exit(EXIT_FAILURE); */
+  /*   } */
+  /* for(int pos=0;pos<NCSI;pos++) */
+  /*   fwrite(hist[pos],S32K*sizeof(int),1,output); */
   
-  fclose(output);
+  /* fclose(output); */
 
   /* theApp=new TApplication("App", &argc, argv);
   canvas = new TCanvas("ECal","ECal",10,10, 500, 300);

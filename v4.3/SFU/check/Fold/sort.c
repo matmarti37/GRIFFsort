@@ -6,15 +6,19 @@ int analyze_data(raw_event *data)
     {
     case 1:
       h->Fill(data->csiarray.h.TSfold);
+      hist[(int)data->csiarray.h.TSfold]++;
       break;
     case 2:
       h->Fill(data->gr.h.Gefold);
+      hist[(int)data->gr.h.Gefold]++;
       break;    
     case 3:
       h->Fill(data->tg.h.Gefold);
+      hist[data->tg.h.Gefold]++;
       break;
     case 4:
       h->Fill(data->pinarray.h.TSfold);
+      hist[(int)data->pinarray.h.TSfold]++;
       break;
     default:
       printf("Not a valid detector subsystem selection!\n");
@@ -30,6 +34,7 @@ int main(int argc, char *argv[])
   TApplication *theApp;
   TCanvas *canvas;
   char title[256];
+  FILE *output;
   if(argc!=3)
     {
       printf("sfu_check_Fold SFU_data_file detector_subsystem_number\n");
@@ -40,6 +45,7 @@ int main(int argc, char *argv[])
   
   h = new TH1D("FoldHistogram","FoldHistogram",10,0,10);
   h->Reset();
+  memset(hist,0,sizeof(hist));
   
   printf("Program sorts Fold histogram.\n");
   
@@ -69,6 +75,13 @@ int main(int argc, char *argv[])
       break;
     }
 
+  if((output=fopen("fold_histogram.spn","w"))==NULL)
+    {
+      printf("Cannot open .spn file\n");
+      exit(EXIT_FAILURE);
+    }
+  fwrite(hist,sizeof(hist),1,output);
+  fclose(output);
 
   theApp=new TApplication("App",&argc ,argv );
   canvas = new TCanvas(title,title,10,10, 500, 300);
@@ -76,4 +89,5 @@ int main(int argc, char *argv[])
   gPad->SetLogy(1);
   h->Draw();
   theApp->Run(kTRUE);
+  
 }

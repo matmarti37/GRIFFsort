@@ -3,105 +3,75 @@
 int analyze_data(raw_event *data)
 {
   cal_event* cev;
-  int suppFlag=0;
-  int take=0;
-  int i=0;
-  int j=0;
 
-  double* energy;
-  int* ring;
+  int pos1,suppFlag1,col1=0,ring1,take1;
+  double eAddBack1;
+  int pos2,suppFlag2,col2=0,ring2,take2;
+  double eAddBack2;
+  
 
   cev=(cal_event*)malloc(sizeof(cal_event));
   memset(cev,0,sizeof(cal_event));
-  
   calibrate_TIGRESS(data,&cal_par->tg,&cev->tg);
-  
-  energy=(double*)calloc(cev->tg.h.FA,sizeof(double));
-  ring=(int*)calloc(cev->tg.h.FA,sizeof(int));
-  
-  if(cev->tg.h.FA>0) //addback fold>0
-    //look through each Tigress position
-    for(pos=1;pos<NPOSTIGR;pos++)
+
+  if(cev->tg.h.FA>1)
+    for(pos1=1;pos1<NPOSTIGR;pos1++)
       {
-      	//reset suppression flag for every position
-      	suppFlag=0;
-      	//check if the position is in the hit pattern
-      	if((cev->tg.h.HHP&(1<<(pos-1)))!=0)
-			    //check the position fold
-			    if(cev->tg.det[pos].hge.FH>0)
-			      //check if the position is in the addback hit pattern
-			      if((cev->tg.h.AHP&(1<<(pos-1)))!=0)
-			        {
-				        //reset take for add-back suppression
-				        take=0;
-				        //Run through four cores for each position
-				        for(col=0;col<NCOL;col++)
-				          {
-				            //check if the position and color is in the hit pattern
-				            if((cev->tg.det[pos].hge.HHP&(1<<col))!=0)
-				              //check the fold
-				              if(cev->tg.det[pos].ge[col].h.FH>0)
-					              {
-		              			  //suppress if the position is in the map and has not yet been suppressed
-		              			  if(cev->tg.det[pos].ge[col].suppress>=supLow && cev->tg.det[pos].ge[col].suppress<=supHigh && take==0)
-		              			    {
-		                  			  /* once suppression flag is set
-		                  				do not reset it, could remove the take bit
-		                  				and keep resetting suppFlag, but this
-		                  				is nicer */
-		              			      suppFlag=1;
-		              			      take=1;
-					                    //printf("event at pos %d col %d suppressed\n",pos,col);
-		              			    }
-					              }
-				          }
-					   
-		            energy[i]=cev->tg.det[pos].addback.E/cal_par->tg.contr_e;
-			          colAddBack=cev->tg.det[pos].addbackC;
-			          ring[i]=cev->tg.det[pos].ge[colAddBack].ring+NRING*suppFlag;
-			          
-			          if(energy[i]>=0 && energy[i]<S32K)
-                	projhist[ring[i]][(int)(energy[i])]++;
-			          
-			          i++;//increment event counter
-			          
-			        }
+	suppFlag1=0;
+	if((cev->tg.h.HHP&(1<<(pos1-1)))!=0)
+	  if(cev->tg.det[pos1].hge.FH>0)
+	    if((cev->tg.h.AHP&(1<<(pos1-1)))!=0)
+	      {
+		take1=0;
+		for(col1=0;col1<NCOL;col1++)
+		  {
+		    if((cev->tg.det[pos1].hge.HHP&(1<<col1))!=0)
+		      if(cev->tg.det[pos1].ge[col1].h.FH>0)
+			if(cev->tg.det[pos1].ge[col1].suppress>=supLow && cev->tg.det[pos1].ge[col1].suppress<=supHigh && take1==0)
+			  {
+			    suppFlag1=1;
+			    take1=1;
+			  }
+		  }
+		eAddBack1 = cev->tg.det[pos1].addback.E/cal_par->tg.contr_e;
+		col1 = cev->tg.det[pos1].addbackC;
+		ring1 = cev->tg.det[pos1].ge[col1].ring;
+		
+		if(eAddBack1 >= gateELow[ring1] && eAddBack1 <= gateEHigh[ring1] && suppFlag1==0)
+		  {
+		    gatehist[ring1][(int)eAddBack1]++;
+		    for(pos2=1;pos2<NPOSTIGR;pos2++)
+		      {
+			suppFlag2=0;
+			if((cev->tg.h.HHP&(1<<(pos2-1)))!=0)
+			  if(cev->tg.det[pos2].hge.FH>0)
+			    if((cev->tg.h.AHP&(1<<(pos2-1)))!=0)
+			      {
+				take2=0;
+				for(col2=0;col2<NCOL;col2++)
+				  {
+				    if((cev->tg.det[pos2].hge.HHP&(1<<col2))!=0)
+				      if(cev->tg.det[pos2].ge[col2].h.FH>0)
+					if(cev->tg.det[pos2].ge[col2].suppress>=supLow && cev->tg.det[pos2].ge[col2].suppress<=supHigh && take2==0)
+					  {
+					    suppFlag2=1;
+					    take2=1;
+					  }
+				  }
+				eAddBack2 = cev->tg.det[pos2].addback.E/cal_par->tg.contr_e;
+				col2 = cev->tg.det[pos2].addbackC;
+				ring2 = cev->tg.det[pos2].ge[col2].ring;
+				if(pos1 != pos2 || col1 != col2)
+				  if(eAddBack2 >= 0 && eAddBack2 < S32K && suppFlag2==0)
+				    {
+				      hist[ring2][(int)eAddBack2]++;
+				    }
+			      }
+		      }
+		  }
+	      }
       }
-  
-  if(i!=cev->tg.h.FA)
-    printf("WARNING: Addback fold not equal to the number of events seen!\n");
-  
-  for(i=0;i<cev->tg.h.FA;i++)
-    {
-      //look for a gamma that falls into the gate
-      if(energy[i]>=0)
-	      if(energy[i]<S32K)
-	        if(energy[i]>=gateELow/cal_par->tg.contr_e)
-		        if(energy[i]<=gateEHigh/cal_par->tg.contr_e)
-		          if(ring[i]>0)
-		            if(ring[i]<NRING)
-		              {
-		                //add all gammas in the event that aren't the gamma that fell into the gate
-		                for(j=0;j<cev->tg.h.FA;j++)
-		                	{
-				                if(j!=i)
-				                  if(energy[j]>=0)
-			                      if(energy[j]<S32K)
-				                      if(ring[j]>0)
-				                        if(ring[j]<NRING)
-				                          hist[ring[j]][(int)(energy[j])]++;
-		                  }
-		                gatehist[ring[i]][(int)(energy[i])]++;
-		                break;//don't double count
-		              }
-    }
-  
-  //printf("***** END OF EVENT *****\n");
-  //getc(stdin);
-  
   free(cev);
-  free(energy);  
-  free(ring);
   return SEPARATOR_DISCARD;
 }
 /*====================================================================================*/
@@ -110,52 +80,57 @@ int main(int argc, char *argv[])
   FILE * output;
   input_names_type* name;
   FILE *cluster;
-  char n[132],FileName[132];
-  double avgGateE;
-  double gateWidth;
+  char n[132], gateFilename[132];
+  FILE *gateFile;
+  char FileName[132];
+  char num[32],low[32],high[32];
+  int ring;
 
-  if(argc!=6)
+  if(argc!=5)
     {
-      printf("TIGRESS_ECalABSuppSumEGated master_file_name supLow supHigh gateELow gateEHigh\n");
-      printf("Program attempts to generate energy gated gamma ray spectra (not background subtracted).  Energy gate values (gateEHigh, gateELow) should be specified in keV.\n");
+      printf("sfu_Tigress_ECalABSuppSumEGate master_file_name supLow supHigh gateRing_file\n");
       exit(-1);
     }
-  
-  printf("Program attempts to generate energy gated gamma ray spectra.\n");
-  
+
   name=(input_names_type*)malloc(sizeof(input_names_type));
   memset(name,0,sizeof(input_names_type));
   
   cal_par=(calibration_parameters*)malloc(sizeof(calibration_parameters));
   memset(cal_par,0,sizeof(calibration_parameters));
   
-  memset(hist,0,sizeof(hist));
+  //memset(hist,0,sizeof(hist));
   memset(gatehist,0,sizeof(gatehist));
-  memset(projhist,0,sizeof(projhist));
+  memset(hist,0,sizeof(hist));
   read_master(argv[1],name);
   
   supLow=atof(argv[2]);
   supHigh=atof(argv[3]);
-  gateELow = atof(argv[4]);
-  gateEHigh = atof(argv[5]);
+  strcpy(gateFilename,argv[4]);
 
-  if(gateELow>gateEHigh)
-  	{
-  		printf("ERROR: cannot have lower gate bound larger than upper gate bound.\n");
-  		exit(-1);
-  	}
-  	
-  avgGateE=(gateELow+gateEHigh)/2.;
-  gateWidth=gateEHigh-gateELow;
+  
+  if((gateFile=fopen(gateFilename,"r"))==NULL)
+    {
+      printf("\nCannot open gate file\n");
+      exit(-2);
+    }
+
+  printf("\n");
+  while(fscanf(gateFile,"%s %s %s\n",num,low,high)!=EOF)
+    {
+      ring=atoi(num);
+      gateELow[ring]=atoi(low);
+      gateEHigh[ring]=atoi(high);
+      printf("Gate for ring %d: %d to %d\n",ring,gateELow[ring],gateEHigh[ring]);
+    }
 
   if(name->flag.cluster_file==1)
     {
       printf("\nSorting data from cluster file:\n %s\n",name->fname.cluster_file);
       if((cluster=fopen(name->fname.cluster_file,"r"))==NULL)
-				{
-					printf("\nI can't open input file %s\n",name->fname.cluster_file);
-					exit(-2);
-				}
+	{
+	  printf("\nI can't open input file %s\n",name->fname.cluster_file);
+	  exit(-2);
+	}
     }
   else
     {
@@ -167,17 +142,12 @@ int main(int argc, char *argv[])
     {
       printf("\nTIGRESS calibration read from the file:\n %s\n",name->fname.TIGRESS_cal_par);
       initialize_TIGRESS_calibration(&cal_par->tg,name->fname.TIGRESS_cal_par);
-
     }
   else
     {
       printf("\nTIGRESS calibration parameters not defined\n");
       exit(EXIT_FAILURE);
     }
-  
-  printf("\n");
-  printf("  Using gamma energy gate between %f and %f keV.\n",gateELow,gateEHigh);
-  printf("\n");
   
   name->flag.inp_data=1; 
   while(fscanf(cluster,"%s",n)!=EOF)
@@ -191,36 +161,25 @@ int main(int argc, char *argv[])
   
   printf("\n");
 
-  sprintf(FileName,"ECalABSuppSum_c%.0f_w%.0fgated.mca",avgGateE,gateWidth);
+  sprintf(FileName,"ECalABSuppSum_Gate.mca");
   if((output=fopen(FileName,"w"))==NULL)
     {
-      printf("ERROR!!! I cannot open the mca file!\n");
-      exit(EXIT_FAILURE);
+      printf("CANNOT OPEN %s\n",FileName);
+      exit(-1);
     }
-  fwrite(hist,2*NRING*S32K*sizeof(int),1,output);
+  fwrite(gatehist,7*S32K*sizeof(int),1,output);
   fclose(output);
-  printf("Gated spectrum saved to file: %s\n",FileName);
-  
-  sprintf(FileName,"ECalABSuppSum_c%.0f_w%.0fgate.mca",avgGateE,gateWidth);
-  if((output=fopen(FileName,"w"))==NULL)
-    {
-      printf("ERROR!!! I cannot open the mca file!\n");
-      exit(EXIT_FAILURE);
-    }
-  fwrite(gatehist,2*NRING*S32K*sizeof(int),1,output);
-  fclose(output);
-  printf("Gate spectrum saved to file: %s\n",FileName);
-  
-  sprintf(FileName,"ECalABSuppSum_c%.0f_w%.0fproj.mca",avgGateE,gateWidth);
-  if((output=fopen(FileName,"w"))==NULL)
-    {
-      printf("ERROR!!! I cannot open the mca file!\n");
-      exit(EXIT_FAILURE);
-    }
-  fwrite(projhist,2*NRING*S32K*sizeof(int),1,output);
-  fclose(output);
-  printf("Projection spectrum saved to file: %s\n",FileName);
+  printf("Gate spectrum saved to file %s\n",FileName);
 
+  sprintf(FileName,"ECalABSuppSum_Gated.mca");
+  if((output=fopen(FileName,"w"))==NULL)
+    {
+      printf("CANNOT OPEN %s\n",FileName);
+      exit(-1);
+    }
+  fwrite(hist,7*S32K*sizeof(int),1,output);
+  fclose(output);
+  printf("Gated spectrum saved to file %s\n",FileName);
 }
 
   

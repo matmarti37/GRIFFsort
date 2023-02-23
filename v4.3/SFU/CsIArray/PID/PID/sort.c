@@ -15,9 +15,11 @@ int analyze_data(raw_event *data)
   calibrate_CSIARRAY(data,&cal_par->csiarray,&cev->csiarray);
 
   if(cev->csiarray.h.FE>0)
+    //{num1++;
     for(pos=1;pos<NCSI;pos++)
       if((cev->csiarray.h.EHP[pos/64]&(one<<pos%64))!=0)
 	{
+	  //num2++;
 	  if(data->csiarray.wfit[pos].type!=1)
 	    continue;
 	  e=cev->csiarray.csi[pos].E/cal_par->csiarray.contr_e;
@@ -29,6 +31,7 @@ int analyze_data(raw_event *data)
 	      h_ring[cev->csiarray.ring[pos]]->Fill(e,r);
 	    }
 	}
+    //}
   free(cev);
   return SEPARATOR_DISCARD;
 }
@@ -42,6 +45,8 @@ int main(int argc, char *argv[])
   char histname[32];
   //TFile* g;
 
+  num1=0,num2=0;
+  
   if(argc!=2)
     {
       printf("sfu_CsIArray_PID master_file_name\n");
@@ -50,7 +55,7 @@ int main(int argc, char *argv[])
 
   for(int i=0;i<NCSI;i++)
     {
-      sprintf(histname,"PID_%3d",i);
+      sprintf(histname,"PID_%d",i);
       h[i] = new TH2D(histname,histname,S32K,0,S32K-1,150,100,249);
       h[i]->Reset();
     }
@@ -134,5 +139,6 @@ int main(int argc, char *argv[])
     }
   
   
-  theApp->Run(kTRUE);
+  /* theApp->Run(kTRUE); */
+  //printf("%d %d\n",num1,num2);
 }

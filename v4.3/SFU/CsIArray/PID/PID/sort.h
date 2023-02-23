@@ -16,4 +16,5 @@
 TH2D *h[NCSI];
 TH2D *h_ring[10];
 calibration_parameters* cal_par;
+int num1,num2;
 #endif

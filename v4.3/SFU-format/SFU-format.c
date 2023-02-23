@@ -348,9 +348,9 @@ void display_caheader(caheader* d)
   printf("Energy     fold                   %4.4x\n",d->Efold);
   printf("CFD        fold                   %4.4x\n",d->Tfold);
   printf("Time Stamp fold                   %4.4x\n",d->TSfold);  
-  printf("Energy hit pattern                %12.12llx\n",d->EHP[0]);
-  printf("CFD hit pattern                   %12.12llx\n",d->THP[0]);
-  printf("Time Stamp hit pattern            %12.12llx\n",d->TSHP[0]);
+  printf("Energy hit pattern                %16.16llx %16.16llx\n",d->EHP[1],d->EHP[0]);
+  printf("CFD hit pattern                   %16.16llx %16.16llx\n",d->THP[1],d->THP[0]);
+  printf("Time Stamp hit pattern            %16.16llx %16.16llx\n",d->TSHP[1],d->TSHP[0]);
  
 }
 /*===============================================================*/

@@ -9,9 +9,11 @@
 #include "TFile.h"
 
 #include "TCutG.h"
-TCutG *pGate = new TCutG();
-TCutG *aGate = new TCutG();
+/* TCutG *pGate[10]; */
+/* TCutG *aGate[10]; */
 
+TCutG *aGate = new TCutG();
+TCutG *pGate = new TCutG();
 
 int keep;
 calibration_parameters* cal_par;

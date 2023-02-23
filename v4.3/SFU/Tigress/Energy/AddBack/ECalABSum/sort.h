@@ -10,4 +10,5 @@ int pos,col;
 
 int  hist[NPOSTIGR][NCOL][S32K];
 calibration_parameters* cal_par;
+
 #endif

@@ -14,13 +14,12 @@
 #include "TFile.h"
 #include "TApplication.h"
 
-int  hist[NRING*2][S32K];
-int gatehist[NRING*2][S32K];
-int projhist[NRING*2][S32K];
+int gatehist[7][S32K];
+int hist[7][S32K];
 calibration_parameters* cal_par;
 double supLow,supHigh;
-double gateELow, gateEHigh;
-int pos,col,colAddBack;
+int gateELow[7], gateEHigh[7];
+//int pos,col,colAddBack;
 
 TH2D *h;
 

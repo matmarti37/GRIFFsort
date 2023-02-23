@@ -15,4 +15,5 @@ int detectorSubsystem=0;
 
 
 TH1D *h;
+int hist[S4K];
 #endif

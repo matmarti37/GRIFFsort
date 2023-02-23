@@ -18,4 +18,5 @@ TCutG *aGate = new TCutG();
 
 TH1D *h;
 calibration_parameters* cal_par;
+int *hist[S2K];
 #endif

@@ -13,9 +13,9 @@ int main(int argc, char *argv[])
   unsigned long long  dt;
   unsigned long pos;
   
-  if(argc!=4)
+  if(argc!=7)
     {
-      printf("list_HPGe_CC_Sup_time_difference list_input_data map window_[ns]\n");
+      printf("list_HPGe_CC_Sup_time_difference list_input_data map window_[ns] Egate_low Egate_high Edivisor\n");
       exit(-1);
     }
   
@@ -33,18 +33,34 @@ int main(int argc, char *argv[])
   window=atoi(argv[3]);
   read_map(argv[2],&map);
   memset(&hist,0,sizeof(hist));
+
+  int Egate_low=atoi(argv[4]);
+  int Egate_high=atoi(argv[5]);
+  int E_divisor=atoi(argv[6]);
+  
   theApp=new TApplication("App", &argc, argv);
   if(h!=NULL) delete h;
   h=new TH1D("TSdiff","TSdiff",S32K,-S16K,S16K);
   if(c!=NULL) delete c;
   c = new TCanvas("TS", "TS",10,10, 700, 500);
 
+  //printf("%d %d %d\n",Egate_low,Egate_high,E_divisor);
   while(1)
     {
       if(fread(&current,son,1,inp)!=1)
 	break;
 
+      /* if(CC_channel(&current,&map)==1) */
+      /* 	{ */
+      /* 	  printf("charge: %d\n",current.ch.charge); */
+      /* 	  if(current.ch.charge/E_divisor>=Egate_low) */
+      /* 	    if(current.ch.charge/E_divisor<=Egate_high) */
+      /* 	      printf("made through\n"); */
+      /* 	  getc(stdin); */
+      /* 	} */
       if(CC_channel(&current,&map)==1)
+	if(current.ch.charge/E_divisor>=Egate_low)
+	  if(current.ch.charge/E_divisor<=Egate_high)
 	{
 	  if((trig=current.tig_trig)<1)
 	    {
@@ -83,6 +99,8 @@ int main(int argc, char *argv[])
 	      if(dt>window)
 		break;
 	      if(CC_channel(&next,&map)==1)
+		if(next.ch.charge/E_divisor>=Egate_low)
+		  if(next.ch.charge/E_divisor<=Egate_high)
 		{
 		  if((trig=next.tig_trig)<1)
 		    {

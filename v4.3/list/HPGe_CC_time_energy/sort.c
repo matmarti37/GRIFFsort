@@ -27,8 +27,8 @@ int analyze_list(int limit,int offset,node* curr,gmap* map)
 		  exit(0);
 		}
 	      energy=curr->ch.charge/divider;
-	      h->Fill(energy,diff);
-	      
+	      //h->Fill(energy,diff);
+	      h->Fill(diff,energy);
 	      tsstore=curr->tsns;
 	    }
   return 0;
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
   read_map(argv[2],&map);
   theApp=new TApplication("App", &ac, av);
   if(h!=NULL) delete h;
-  h=new TH2D("CC_Charge","CC_Charge",S4K,0,S16K,S1K,0,S4K);
+  h=new TH2D("CC_Charge","CC_Charge",S1K,0,S4K,S4K,0,S16K);
   if(c!=NULL) delete c;
   c = new TCanvas("TS", "TS",10,10, 700, 500);
 
@@ -81,8 +81,8 @@ int main(int argc, char *argv[])
   fclose(inp);
 
   TFile f("tsdiff_vs_charge.root","recreate");
-  h->GetYaxis()->SetTitle("TSDiff");
-  h->GetXaxis()->SetTitle("CC Charge");
+  h->GetXaxis()->SetTitle("TSDiff");
+  h->GetYaxis()->SetTitle("CC Charge");
   h->GetXaxis()->CenterTitle(true);
   h->GetYaxis()->CenterTitle(true);
   h->SetOption("colz");

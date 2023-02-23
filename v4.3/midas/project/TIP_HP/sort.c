@@ -4,11 +4,33 @@
 int analyze_fragment(Grif_event* ptr, short* waveform)
 {
 
+  Int_t d;
+  WaveFormPar wpar;
+  int type;
+  double energy;
+
+  energy=0.;
+
+  if((ptr->chan>=1024) && (ptr->chan<=1380))
+    if((d=ptr->waveform_length)!=0)
+    {
+      /* printf("%d\n",ptr->waveform_length); */
+      fit_CsI_waveform(d,waveform,par,&wpar);
+      type=par->type;
+      if(type==1)
+	energy=par->am[2]+par->am[3];
+      /* if(energy!=0) */
+      /* 	printf("%f\n",energy); */
+      /* printf("%f\n",energy); */
+      /* printf("%Lf\n",par->am[2]); */
+    }
+
   if((ptr->chan>=1024) && (ptr->chan<=1380))
     {
      h_2D->Fill(x_vals[ptr->chan],y_vals[ptr->chan]);
      h_channel->Fill(ptr->chan);
      h_detector->Fill(det_map[ptr->chan]);
+     h_energy->Fill(det_map[ptr->chan],energy);
     }
 
   return 0;
@@ -23,6 +45,14 @@ int main(int argc, char *argv[])
   //int ac;
   //char *av[1];
 
+  par=(ShapePar*)malloc(sizeof(ShapePar));
+  memset(par,0,sizeof(ShapePar));
+  par->t[1]=5000;
+  par->t[2]=75;
+  par->t[3]=300;
+  par->t[4]=16;
+
+  
   //ac=0;
   //av[0]=(char*) malloc(sizeof(char));
   if(argc!=4)
@@ -45,6 +75,9 @@ int main(int argc, char *argv[])
   
   h_mapping=new TH2D("Mapping","Mapping",20,0,20,10,0,10);
   h_mapping->Reset();
+
+  h_energy=new TH2D("Energy","Energy",150,0,150,S32K,0,S32K);
+  h_energy->Reset();
   
   
   // Reads the map file
@@ -177,6 +210,16 @@ int main(int argc, char *argv[])
     h_detector->GetYaxis()->SetTitleOffset(1.5);
     h_detector->Write();
    }
+  if(h_energy->GetEntries())
+    {
+      h_energy->GetXaxis()->SetTitle("Detector");
+      h_energy->GetXaxis()->CenterTitle(true);
+      h_energy->GetYaxis()->SetTitle("Amplitude");
+      h_energy->GetYaxis()->CenterTitle(true);
+      h_energy->GetYaxis()->SetTitleOffset(1.5);
+      h_energy->Write();
+    }
+  f.Close();
   
   //theApp=new TApplication("App", &ac, av);
   //c = new TCanvas("2DHitPattern", "2D HitPattern",10,10, 700, 500);

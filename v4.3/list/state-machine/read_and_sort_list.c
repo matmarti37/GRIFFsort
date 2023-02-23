@@ -205,7 +205,7 @@ int map_event(raw_event* data,node *ptr, gmap* map)
 		{
 		  data->csiarray.csi[pos].charge=ptr->ch.charge;
 		  data->csiarray.h.Efold++;
-		  data->csiarray.h.EHP[pos/64]=(one<<pos%64);		 
+		  data->csiarray.h.EHP[pos/64]|=(one<<pos%64);		 
 		  take|=1;
 		}
 	      if(ptr->ch.cfd>0)
@@ -593,10 +593,21 @@ int map_event(raw_event* data,node *ptr, gmap* map)
 int print_list(int limit, int offset, node* list)
 {
   int i;
+  /* char type[32]; */ // For MATT's SCREENSHOTS
 
   for(i=0;i<limit;i++)
     printf("Frag: %9d Ts[ns] %16lld Ch %4d Ts_up %8u Ts %8u CFD %8u TigTrig %8d CsITrig %8d TrigTs[ns] %16lld Trig %8d\n",i+offset,list[i].tsns,list[i].chan,(unsigned int)list[i].ch.timestamp_up,(unsigned int)list[i].ch.timestamp,(unsigned int)list[i].ch.cfd,list[i].tig_trig,list[i].csi_trig,list[i].trig_tsns,list[i].trig);
-  
+    /* { */ // FOR MATT's SCREENSHOTS
+    /*   if(list[i].chan>1023) */
+    /* 	strcpy(type,"TIP"); */
+    /*   else if(list[i].chan==169 || list[i].chan==771) */
+    /* 	strcpy(type,"CC "); */
+    /*   else if(list[i].chan>500) */
+    /* 	strcpy(type,"SUP"); */
+    /*   else */
+    /* 	strcpy(type,"SEG"); */
+    /*   printf("Frag: %5d Type: %s   Ts[ns]: %10lld TigTrig: %5d TIPTrig: %5d TrigTs[ns]: %10lld Trig: %5d\n",i+offset,type,list[i].tsns,list[i].tig_trig,list[i].csi_trig,list[i].trig_tsns,list[i].trig); */
+    /* } */
   return 0;
 }
 /*================================================================*/

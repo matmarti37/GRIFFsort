@@ -11,9 +11,10 @@ int main(int argc, char *argv[])
   unsigned long long dt;
   unsigned long pos;
   
-  if(argc!=4)
+  if(argc!=7)
     {
-      printf("list_HPGe_CC_Seg_time_difference list_input_data map window_[ns]\n");
+      printf("list_HPGe_CC_Seg_time_difference list_input_data map window_[ns] Egate_low Egate_high Edivisor\n");
+      printf("Energy gates are on the segments for this one\n");
       exit(-1);
     }
   
@@ -32,15 +33,16 @@ int main(int argc, char *argv[])
   window=atoi(argv[3]);
   read_map(argv[2],&map);
   memset(&hist,0,sizeof(hist));
+  Egate_low=atoi(argv[4]);
+  Egate_high=atoi(argv[5]);
+  E_divisor=atoi(argv[6]);
+
+  
   theApp=new TApplication("App", &argc, argv);
   if(h!=NULL) delete h;
   h=new TH1D("TSdiff","TSdiff",S32K,-S16K,S16K);
   if(c!=NULL) delete c;
   c = new TCanvas("TS", "TS",10,10, 700, 500);
-
-  /* current.chan=9; */
-  /* printf("%d\n",CC_channel(&current,&map)); */
-  /* getc(stdin); */
 
   while(1)
     {
@@ -52,7 +54,6 @@ int main(int argc, char *argv[])
 	  if((trig=current.tig_trig)<1)
 	    {
 	      printf("aIncorrect TIGRESS CC trigger %d at tsns %16lld channel %d. Exiting\n",trig,current.tsns,current.chan);
-	      //print_map(&map);
 	      exit(0);
 	    }
 	  pos=ftell(inp);//save current position
@@ -65,58 +66,59 @@ int main(int argc, char *argv[])
 	      if(dt>window)
 		break;
 	      if(Seg_channel(&next,&map)==1)
-		if(same_HPGe(&current,&next,&map)==1)
-		  {
-		    position=map.hpge_lt[next.chan-map.tig_min].pos;
-		    //colour=map.hpge_lt[next.chan-map.tig_min].seg;
-		    h->Fill((int)dt);
-		    if(dt<S16K)
+		if(next.ch.charge/E_divisor>=Egate_low)
+		  if(next.ch.charge/E_divisor<=Egate_high)
+		    if(same_HPGe(&current,&next,&map)==1)
 		      {
-			hist[0][S16K+dt]++;
-			hist[position][S16K+dt]++;
-			//hist[8*(position-1)+colour][S16K+dt]++;
+			position=map.hpge_lt[next.chan-map.tig_min].pos;
+			//colour=map.hpge_lt[next.chan-map.tig_min].seg;
+			h->Fill((int)dt);
+			if(dt<S16K)
+			  {
+			    hist[0][S16K+dt]++;
+			    hist[position][S16K+dt]++;
+			    //hist[8*(position-1)+colour][S16K+dt]++;
+			  }
 		      }
-		  }
 	    }
 	  fseek(inp,pos,SEEK_SET);
 	}
 
       if(Seg_channel(&current,&map)==1)
-	{
-	  pos=ftell(inp);//save current position
-	  while(1)
+	if(current.ch.charge/E_divisor>=Egate_low)
+	  if(current.ch.charge/E_divisor<=Egate_high)
 	    {
-	      if(fread(&next,son,1,inp)!=1)
-		break;
-	      /* if(next.tsns>2682750000) */
-	      /* 	printf("CHAN %d TSNS %16lld CCCHAN %d\n",next.chan,next.tsns,CC_channel(&next,&map)); */
-	      dt=next.tsns-current.tsns;	      
-	      if(dt>window)
-		break;
-	      if(CC_channel(&next,&map)==1)
+	      pos=ftell(inp);//save current position
+	      while(1)
 		{
-		  if((trig=next.tig_trig)<1)
+		  if(fread(&next,son,1,inp)!=1)
+		    break;
+		  dt=next.tsns-current.tsns;
+		  if(dt>window)
+		    break;
+		  if(CC_channel(&next,&map)==1)
 		    {
-		      printf("bbbIncorrect TIGRESS CC trigger %d at tsns %16lld channel %d. Exiting\n",trig,next.tsns,next.chan);
-		      //print_map(&map);
-		      exit(0);
-		    }
-		  if(same_HPGe(&current,&next,&map)==1)
-		    {
-		      position=map.hpge_lt[current.chan-map.tig_min].pos;
-		      //colour=map.hpge_lt[current.chan-map.tig_min].seg;
-		      h->Fill(-(int)dt);
-		      if(dt<S16K)
+		      if((trig=next.tig_trig)<1)
 			{
-			  hist[0][S16K-dt]++;
-			  hist[position][S16K-dt]++;
-			  //hist[8*(position-1)+colour][S16K-dt]++;
+			  printf("bbbIncorrect TIGRESS CC trigger %d at tsns %16lld channel %d. Exiting\n",trig,next.tsns,next.chan);
+			  exit(0);
+			}
+		      if(same_HPGe(&current,&next,&map)==1)
+			{
+			  position=map.hpge_lt[current.chan-map.tig_min].pos;
+			  //colour=map.hpge_lt[current.chan-map.tig_min].seg;
+			  h->Fill(-(int)dt);
+			  if(dt<S16K)
+			    {
+			      hist[0][S16K-dt]++;
+			      hist[position][S16K-dt]++;
+			      //hist[8*(position-1)+colour][S16K-dt]++;
+			    }
 			}
 		    }
 		}
+	      fseek(inp,pos,SEEK_SET);
 	    }
-	  fseek(inp,pos,SEEK_SET);	  
-	}
     }
 
   fclose(inp);
